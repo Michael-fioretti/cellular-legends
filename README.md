@@ -30,13 +30,26 @@ De cloud-onboarding ondersteunt geen openbare previewlinks.
   de huidige solo-voortgang. Een nieuwe campagne reset ook inventory en munten.
   Saves zijn gebonden aan deze browser en de oorsprong van de website.
 
+## Moves en cooldowns (solo)
+
+Een geslaagde move kost de volledige ATP-prijs, doet het normale effect en
+blokkeert die move gedurende de volgende volledige rondes in de initiative:
+1 ronde bij moves tot 25 ATP, 2 rondes bij moves van 26–40 ATP, 3 rondes bij
+moves boven 40 ATP. Andere moves en basisaanvallen blijven beschikbaar.
+Een fout antwoord of verlopen vraag kost dezelfde ATP-prijs en doet geen
+schade/healing/effect van die move. In plaats daarvan krijgt alleen de speler
+Membraan Schild: de eerstvolgende vijandelijke aanval doet 50% minder schade,
+waarna het schild verdwijnt. De mislukte move krijgt geen cooldown.
+De bestaande ATP-regeneratie na een beurt blijft actief. Cooldowns blijven
+bewaard bij herladen en worden gewist aan het begin van een nieuw gevecht.
+
 ## Multiplayer
 
 De aangeleverde HTML gebruikt de bestaande externe squadservice op
 `cellular-legends-squad-michael.michaelvanderleeden.chatgpt.site`.
 Deze repository bevat geen backend van die service. De bestaande squadflow is
 behouden; de inventory toont de door die server verstrekte materialen en gear.
-De nieuwe munten, quests, koopacties en verbruiksitems zijn voor solo.
+De nieuwe munten, quests, koopacties, verbruiksitems en cooldown/schildregels zijn voor solo.
 Voor dezelfde mogelijkheden in squads moet de externe server worden bijgewerkt
 met de spelregels in deze HTML. De beschikbaarheid van die service is niet
 gegarandeerd door deze repository. Lettertypen worden opgehaald bij Google Fonts;

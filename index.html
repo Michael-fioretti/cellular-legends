@@ -951,10 +951,10 @@ function createInitiative(members,enemies){
                 color: 'cyan',
                 badgeIcon: 'shield',
                 skills: [
-                    {id:'fagocytose',name:'Fagocytose Klem',cost:25,diff:'medium',unlock:1,target:'enemy',effect:'damage',power:35,taunt:true,desc:'35 schade aan je doelwit. Trekt aanvallen naar jou tot je volgende beurt.'},
-                    {id:'lysosoom_bom',name:'Lysosoom Eruptie',cost:40,diff:'hard',unlock:2,target:'all-enemies',effect:'damage',power:30,desc:'AOE: 30 schade aan alle levende vijanden.'},
-                    {id:'membraan_bastion',name:'Membraan Bastion',cost:30,diff:'medium',unlock:3,target:'all-allies',effect:'guard',desc:'Geeft het hele team een schild: halveert de volgende aanval.'},
-                    {id:'immuun_charge',name:'Immuun Charge',cost:50,diff:'hard',unlock:5,target:'enemy',effect:'damage',power:85,taunt:true,desc:'85 schade aan één vijand en trekt aanvallen naar jou.'}
+                    {id:'fagocytose',name:'Fagocytose Klem',cost:25,cooldown:1,diff:'medium',unlock:1,target:'enemy',effect:'damage',power:35,taunt:true,desc:'35 schade aan je doelwit. Trekt aanvallen naar jou tot je volgende beurt.'},
+                    {id:'lysosoom_bom',name:'Lysosoom Eruptie',cost:40,cooldown:2,diff:'hard',unlock:2,target:'all-enemies',effect:'damage',power:30,desc:'AOE: 30 schade aan alle levende vijanden.'},
+                    {id:'membraan_bastion',name:'Membraan Bastion',cost:30,cooldown:2,diff:'medium',unlock:3,target:'all-allies',effect:'guard',desc:'Geeft het hele team een schild: halveert de volgende aanval.'},
+                    {id:'immuun_charge',name:'Immuun Charge',cost:50,cooldown:3,diff:'hard',unlock:5,target:'enemy',effect:'damage',power:85,taunt:true,desc:'85 schade aan één vijand en trekt aanvallen naar jou.'}
                 ]
             },
             enzym: {
@@ -967,10 +967,10 @@ function createInitiative(members,enemies){
                 color: 'purple',
                 badgeIcon: 'zap',
                 skills: [
-                    {id:'katalyse',name:'Snel-Katalyse',cost:25,diff:'medium',unlock:1,target:'enemy',effect:'damage',power:45,desc:'45 schade aan één gekozen vijand.'},
-                    {id:'enzym_golf',name:'Katalyse Golf',cost:40,diff:'medium',unlock:2,target:'all-enemies',effect:'damage',power:28,desc:'AOE: 28 schade aan alle levende vijanden.'},
-                    {id:'substraat_overdrive',name:'Substraat Overdrive',cost:50,diff:'hard',unlock:3,target:'enemy',effect:'damage',power:80,desc:'80 schade aan één gekozen vijand.'},
-                    {id:'kettingreactie',name:'Kettingreactie',cost:65,diff:'hard',unlock:5,target:'all-enemies',effect:'damage',power:48,desc:'AOE: 48 schade aan alle levende vijanden.'}
+                    {id:'katalyse',name:'Snel-Katalyse',cost:25,cooldown:1,diff:'medium',unlock:1,target:'enemy',effect:'damage',power:45,desc:'45 schade aan één gekozen vijand.'},
+                    {id:'enzym_golf',name:'Katalyse Golf',cost:40,cooldown:2,diff:'medium',unlock:2,target:'all-enemies',effect:'damage',power:28,desc:'AOE: 28 schade aan alle levende vijanden.'},
+                    {id:'substraat_overdrive',name:'Substraat Overdrive',cost:50,cooldown:3,diff:'hard',unlock:3,target:'enemy',effect:'damage',power:80,desc:'80 schade aan één gekozen vijand.'},
+                    {id:'kettingreactie',name:'Kettingreactie',cost:65,cooldown:3,diff:'hard',unlock:5,target:'all-enemies',effect:'damage',power:48,desc:'AOE: 48 schade aan alle levende vijanden.'}
                 ]
             },
             ribosoom: {
@@ -983,10 +983,10 @@ function createInitiative(members,enemies){
                 color: 'emerald',
                 badgeIcon: 'heart-pulse',
                 skills: [
-                    {id:'eiwit_synthese',name:'Eiwit-Synthese Herstel',cost:25,diff:'medium',unlock:1,target:'ally',effect:'heal',power:55,desc:'Kies een teamgenoot: herstel 55 HP plus Katalysebonus. Kan ook iemand overeind helpen.'},
-                    {id:'herstel_golf',name:'Herstel Golf',cost:40,diff:'medium',unlock:2,target:'all-allies',effect:'heal',power:32,desc:'AOE-heal: herstelt 32 HP plus bonus bij het hele team.'},
-                    {id:'atp_boost',name:'ATP Charge',cost:25,diff:'hard',unlock:3,target:'ally',effect:'energy',power:55,desc:'Kies een teamgenoot: herstel 55 ATP plus bonus.'},
-                    {id:'levenskern',name:'Levenskern',cost:55,diff:'hard',unlock:5,target:'all-allies',effect:'heal',power:65,desc:'Grote AOE-heal: herstel 65 HP plus bonus bij het hele team.'}
+                    {id:'eiwit_synthese',name:'Eiwit-Synthese Herstel',cost:25,cooldown:1,diff:'medium',unlock:1,target:'ally',effect:'heal',power:55,desc:'Kies een teamgenoot: herstel 55 HP plus Katalysebonus. Kan ook iemand overeind helpen.'},
+                    {id:'herstel_golf',name:'Herstel Golf',cost:40,cooldown:2,diff:'medium',unlock:2,target:'all-allies',effect:'heal',power:32,desc:'AOE-heal: herstelt 32 HP plus bonus bij het hele team.'},
+                    {id:'atp_boost',name:'ATP Charge',cost:25,cooldown:1,diff:'hard',unlock:3,target:'ally',effect:'energy',power:55,desc:'Kies een teamgenoot: herstel 55 ATP plus bonus.'},
+                    {id:'levenskern',name:'Levenskern',cost:55,cooldown:3,diff:'hard',unlock:5,target:'all-allies',effect:'heal',power:65,desc:'Grote AOE-heal: herstel 65 HP plus bonus bij het hele team.'}
                 ]
             },
             chromosoom: {
@@ -999,10 +999,10 @@ function createInitiative(members,enemies){
                 color: 'amber',
                 badgeIcon: 'split',
                 skills: [
-                    {id:'crossing_over',name:'Crossing-Over Strike',cost:25,diff:'medium',unlock:1,target:'enemy',effect:'damage',power:48,desc:'48 schade aan één gekozen vijand.'},
-                    {id:'dna_focus',name:'DNA Focus',cost:20,diff:'medium',unlock:2,target:'self',effect:'focus',desc:'Je volgende basisaanval doet 50% meer schade.'},
-                    {id:'reductiedeling',name:'Reductiedeling Nova',cost:40,diff:'hard',unlock:3,target:'all-enemies',effect:'damage',power:36,desc:'AOE: 36 schade aan alle levende vijanden.'},
-                    {id:'replicatie_combo',name:'Replicatie Combo',cost:55,diff:'hard',unlock:5,target:'enemy',effect:'damage',power:100,desc:'100 schade aan één gekozen vijand.'}
+                    {id:'crossing_over',name:'Crossing-Over Strike',cost:25,cooldown:1,diff:'medium',unlock:1,target:'enemy',effect:'damage',power:48,desc:'48 schade aan één gekozen vijand.'},
+                    {id:'dna_focus',name:'DNA Focus',cost:20,cooldown:1,diff:'medium',unlock:2,target:'self',effect:'focus',desc:'Je volgende basisaanval doet 50% meer schade.'},
+                    {id:'reductiedeling',name:'Reductiedeling Nova',cost:40,cooldown:2,diff:'hard',unlock:3,target:'all-enemies',effect:'damage',power:36,desc:'AOE: 36 schade aan alle levende vijanden.'},
+                    {id:'replicatie_combo',name:'Replicatie Combo',cost:55,cooldown:3,diff:'hard',unlock:5,target:'enemy',effect:'damage',power:100,desc:'100 schade aan één gekozen vijand.'}
                 ]
             }
         };
@@ -1264,7 +1264,7 @@ const own=(object,key)=>Object.prototype.hasOwnProperty.call(object,key);
 const xpForLevel=level=>20*(level-1)*level;
 function levelForXp(xp){let level=1;while(level<MAX_PLAYER_LEVEL&&xp>=xpForLevel(level+1))level++;return level;}
 function makeMember(id,name,earned=0,xp=0){
- return {id,name:String(name||'Cel-Strijder').trim().slice(0,24),classKey:null,isReady:false,hp:100,maxHp:100,atp:80,maxAtp:80,shield:false,focused:false,ph:7,temp:37,attributes:blankAttributes(),attributePoints:earned,pointsEarned:earned,xp,level:levelForXp(xp),questionMode:'mixed',questionHistory:[],restChoice:null,restId:null,inventory:emptyInventory(),equipment:emptyEquipment(),battleStats:{damage:0,healing:0,blocked:0}};
+ return {id,name:String(name||'Cel-Strijder').trim().slice(0,24),classKey:null,isReady:false,hp:100,maxHp:100,atp:80,maxAtp:80,shield:false,focused:false,ph:7,temp:37,attributes:blankAttributes(),attributePoints:earned,pointsEarned:earned,xp,level:levelForXp(xp),questionMode:'mixed',questionHistory:[],restChoice:null,restId:null,inventory:emptyInventory(),equipment:emptyEquipment(),skillCooldowns:{},battleStats:{damage:0,healing:0,blocked:0}};
 }
 function memberStats(member){
  const hero=HERO_CLASSES[member.classKey],a=member.attributes||blankAttributes(),levelBonus=Math.max(0,(member.level||1)-1),gear=equipmentBonus(member);
@@ -1320,6 +1320,10 @@ function targetChange(target,side,amount,resource='hp',restore=false){
  target[resource]=restore?Math.min(maximum,before+amount):Math.max(0,before-amount);
  return {id:target.id,side,amount:Math.abs(target[resource]-before),resource,before,after:target[resource]};
 }
+// A cooldown of N skips the next N full initiative rounds.
+function skillCooldownRemaining(member,skill,battle){
+ return Math.max(0,(member.skillCooldowns?.[skill.id]||0)-(battle.round||1));
+}
 function performCombatAction(state,id,payload){
  const m=state.members[id],b=state.battle,hero=HERO_CLASSES[m.classKey],stats=memberStats(m);
  let targets=[],kind=payload.type,label='',killed=[];
@@ -1327,6 +1331,7 @@ function performCombatAction(state,id,payload){
   const skill=payload.type==='skill'?hero.skills.find(s=>s.id===payload.skillId):null;
   if(payload.type==='skill'&&!skill)throw new Error('Onbekende vaardigheid.');
   if(skill&&m.level<skill.unlock)throw new Error('Deze move komt vrij op level '+skill.unlock+'.');
+  if(skill&&skillCooldownRemaining(m,skill,b)>0)throw new Error('Deze move is nog op cooldown.');
   if(skill&&m.atp<skill.cost)throw new Error('Je hebt te weinig ATP.');
   const mode=skill?.target||'enemy',effect=skill?.effect||'damage';let recipients;
   if(mode==='all-enemies')recipients=b.enemies.filter(e=>e.hp>0);
@@ -1337,8 +1342,13 @@ function performCombatAction(state,id,payload){
   const question=questionPool(m.questionMode).find(q=>q.id===payload.quizId);
   if(!question||!Number.isInteger(payload.answer)||payload.answer<-1||payload.answer>=question.options.length)throw new Error('Deze vraag past niet bij jouw ingestelde moeilijkheid.');
   m.questionHistory.push(question.id);m.questionHistory=m.questionHistory.slice(-24);
-  if(payload.answer!==question.correct){addEvent(state,m,'miss',(payload.answer===-1?'Tijd om':'Antwoord onjuist')+' · '+(skill?.name||'Basisaanval')+' mislukt.');return;}
   if(skill)m.atp-=skill.cost;
+  if(payload.answer!==question.correct){
+   if(skill)m.shield=true;
+   addEvent(state,m,skill?'defend':'miss',(payload.answer===-1?'Tijd om':'Antwoord onjuist')+' · '+(skill?.name||'Basisaanval')+' mislukt.'+(skill?' −'+skill.cost+' ATP · geen cooldown · Membraan Schild: volgende aanval −50% schade.':''));return;
+  }
+  if(skill){m.skillCooldowns??={};m.skillCooldowns[skill.id]=(b.round||1)+skill.cooldown+1;}
+
   if(effect==='damage'){
    const damage=skill?skill.power+stats.skillBonus:Math.round(stats.attack*(m.focused?1.5:1));if(!skill)m.focused=false;
    targets=recipients.map(e=>{const result=targetChange(e,'enemy',damage);m.battleStats.damage+=result.amount;if(!e.hp)killed.push(e);return result;});
@@ -1360,6 +1370,7 @@ function performCombatAction(state,id,payload){
   else if(payload.itemId==='koel_eiwit'){m.temp=37;kind='item';label='Koel-Eiwit · temperatuur hersteld.';}
   else throw new Error('Onbekend item.');
  }else throw new Error('Ongeldige gevechtsactie.');
+ if(payload.type==='skill'){const used=hero.skills.find(skill=>skill.id===payload.skillId);label+=' · '+used.cooldown+' ronde(n) cooldown.';}
  const animation=addEvent(state,m,kind,label,targets);if(payload.type==='skill')animation.moveId=payload.skillId;
  for(const enemy of killed){state.teamKills++;b.log.push(enemy.name+' verslagen.');awardEnemyLoot(state,enemy);gainTeamXp(state,15,'vijand verslagen');}
  syncEnemyHealth(b);
@@ -1377,6 +1388,7 @@ class SquadEngine{
    if(!m.attributes){m.attributes=blankAttributes();this.migrated=true;}
    if(!m.inventory){m.inventory=emptyInventory();this.migrated=true;}normalizeInventory(m);
    if(!m.equipment){m.equipment=emptyEquipment();this.migrated=true;}
+   if(!m.skillCooldowns){m.skillCooldowns={};this.migrated=true;}
    if(!Number.isInteger(m.xp)){m.xp=state.teamXp;m.level=levelForXp(m.xp);this.migrated=true;}
    for(const [key,value] of Object.entries({attributePoints:0,pointsEarned:0,restChoice:null,restId:null,questionMode:'mixed',questionHistory:[],focused:false,battleStats:{damage:0,healing:0,blocked:0}}))if(m[key]===undefined){m[key]=value;this.migrated=true;}
    if(legacy&&m.classKey)refreshMemberStats(m,false,true);
@@ -1456,7 +1468,7 @@ class SquadEngine{
    const route=s.journey?.stageIndex===s.stageIndex?s.journey.options.find(o=>o.id===s.journey.winnerId):null;
    if(route?.effect==='danger')for(const enemy of encounter.enemies){enemy.maxHp=enemy.hp=Math.ceil(enemy.hp*1.2);enemy.damage=Math.ceil(enemy.damage*1.15);}
    if(route?.effect==='shelter')for(const enemy of encounter.enemies)enemy.damage=Math.max(1,Math.floor(enemy.damage*.8));
-   for(const member of Object.values(s.members)){member.isReady=false;member.shield=false;member.focused=false;member.restChoice=null;member.battleStats={damage:0,healing:0,blocked:0};}
+   for(const member of Object.values(s.members)){member.isReady=false;member.shield=false;member.focused=false;member.restChoice=null;member.skillCooldowns={};member.battleStats={damage:0,healing:0,blocked:0};}
    const initiative=createInitiative(s.members,encounter.enemies);s.currentLevel=encounter.level;s.status='battle';
    s.battle={...encounter,id:crypto.randomUUID(),partySize,initiative,turnQueue:initiative.map(e=>e.id),turnIndex:0,turnNumber:0,round:1,activeActorId:null,activePlayerId:null,phase:null,events:[],eventSeq:0,loot:{lipid:0,protein:0,mineral:0,nucleus:0},routeName:route?.name||null,routeEffect:route?.effect||null,log:['Stage '+(s.stageIndex+1)+' / '+CAMPAIGN_LENGTH+' · '+encounter.title,'Initiative: '+initiative.map(e=>e.name+' ('+e.total+')').join(' → ')],result:null,tauntPlayerId:null};syncEnemyHealth(s.battle);this.setCurrentActor();
   }else if(command==='action'){
@@ -1996,13 +2008,13 @@ class SquadEngine{
         window.openSkillMenu=function(){
             if(!canAct())return;const m=activeMember(),hero=HERO_CLASSES[m.classKey];
             document.getElementById('skills-list-container').innerHTML='<p class="text-sm text-cyan-200">Aanval → '+escapeHTML(actorLabel(selectedEnemyId))+' · Healing → '+escapeHTML(actorLabel(selectedAllyId))+'</p>'+hero.skills.map(skill=>{
-                const locked=m.level<skill.unlock,disabled=locked||m.atp<skill.cost;
-                return '<button onclick="selectSkill(\''+skill.id+'\')" '+(disabled?'disabled':'')+' class="skill-choice '+(locked?'move-locked':'')+'"><div><b>'+escapeHTML(skill.name)+(skill.target.startsWith('all-')?' <span class="aoe-tag">AOE</span>':'')+'</b><p>'+escapeHTML(skill.desc)+'</p></div><span>'+skill.cost+' ATP<br>'+(locked?'Level '+skill.unlock:'Vrijgespeeld')+'</span></button>';
+                const locked=m.level<skill.unlock,cooldown=skillCooldownRemaining(m,skill,activeCampaign().battle),disabled=locked||cooldown>0||m.atp<skill.cost;
+                return '<button onclick="selectSkill(\''+skill.id+'\')" '+(disabled?'disabled':'')+' class="skill-choice '+(locked?'move-locked':'')+'"><div><b>'+escapeHTML(skill.name)+(skill.target.startsWith('all-')?' <span class="aoe-tag">AOE</span>':'')+'</b><p>'+escapeHTML(skill.desc)+(!isSquadMode?' Na succes: '+skill.cooldown+' ronde(n) cooldown. Bij falen: ATP kwijt, schild, geen cooldown.':'')+'</p></div><span>'+skill.cost+' ATP<br>'+(locked?'Level '+skill.unlock:cooldown?'Cooldown: '+cooldown+' ronde(n)':'Beschikbaar')+'</span></button>';
             }).join('');document.getElementById('skills-modal').classList.remove('hidden');
         };
         window.closeSkillMenu=()=>document.getElementById('skills-modal').classList.add('hidden');
         window.selectSkill=function(skillId){
-            if(!canAct())return;const m=activeMember(),skill=availableSkills(m).find(s=>s.id===skillId);if(!skill||m.atp<skill.cost)return;
+            if(!canAct())return;const m=activeMember(),skill=availableSkills(m).find(s=>s.id===skillId);if(!skill||m.atp<skill.cost||skillCooldownRemaining(m,skill,activeCampaign().battle)>0)return;
             closeSkillMenu();gameState.pendingAction={type:'skill',skillId,targetId:selectedEnemyId,allyId:selectedAllyId};openQuizModal();
         };
         window.executeDefendAction=function(){if(canAct())commitAction({type:'defend'});};
@@ -2048,7 +2060,9 @@ class SquadEngine{
             const title = document.getElementById('quiz-feedback-title');
             title.textContent = correct ? 'Juist Antwoord! (+150 Score)' : selectedIdx === -1 ? 'Tijd Om!' : 'Helaas, Onjuist!';
             title.className = `font-bold text-base ${correct ? 'text-emerald-400' : 'text-rose-400'}`;
-            document.getElementById('quiz-feedback-desc').textContent = currentQuizData.explanation;
+            const pendingSkill=gameState.pendingAction?.type==='skill'?availableSkills(activeMember()).find(skill=>skill.id===gameState.pendingAction.skillId):null;
+            const consequence=pendingSkill&&!isSquadMode?(correct?' Deze move kost '+pendingSkill.cost+' ATP en krijgt '+pendingSkill.cooldown+' ronde(n) cooldown.':' Deze move kost '+pendingSkill.cost+' ATP. In plaats van de move krijg je Membraan Schild: de volgende aanval doet 50% minder schade. Geen cooldown.'):'';
+            document.getElementById('quiz-feedback-desc').textContent = currentQuizData.explanation+consequence;
             document.getElementById('quiz-feedback-box').classList.remove('hidden');
             document.getElementById('quiz-continue-btn').disabled = false;
         };

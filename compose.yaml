@@ -1,0 +1,10 @@
+services:
+  game:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - game-data:/data
+    restart: unless-stopped
+volumes:
+  game-data:

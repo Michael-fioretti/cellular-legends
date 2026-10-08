@@ -549,7 +549,7 @@ button,input,select{font:inherit}button{touch-action:manipulation}button:focus-v
                 <div><h3 class="font-bold text-purple-300">Levels en nieuwe moves</h3><p>Verslagen vijanden en gehaalde stages geven iedereen dezelfde team-XP. Elke level-up geeft twee attribute points. Nieuwe moves komen vrij op level 2, 3 en 5. Verbeter Vitaliteit, Kracht, Katalyse en Energie in de rustpauze.</p></div>
                 <div><h3 class="font-bold text-emerald-300">Jouw eigen vragenniveau</h3><p>Kies makkelijk, gemiddeld, moeilijk, gemengd of oefentoets. Dit geldt voor al jouw aanvalsvragen. Je hebt respectievelijk 30, 45, 60 of 90 seconden per vraag. Een fout antwoord kost je actie. Na een vraag zie je de uitleg. Je vragen en antwoordposities wisselen.</p></div>
                 <div><h3 class="font-bold text-cyan-300">Long rest bij de ATP-bron</h3><p>Er zijn vijf kleine gevechten vóór elke boss, met meer vijanden voor een grotere party. Na elk gevecht herstelt 25% HP en ATP. Kies extra HP of ATP, verdeel punten en bekijk nieuwe moves. In een squad moet iedereen opnieuw gereed zijn. Alleen de host start. Vertrekt de host, dan sluit de squad.</p></div>
-                <div><h3 class="font-bold text-amber-300">Routes, events en crafting</h3><p>Na elk gewonnen gevecht stemt iedereen op één van drie stops. De meeste stemmen winnen; bij gelijkspel wordt geloot. Kies herstel, materialen, onderzoek of een gevecht met meer risico en beloning. Iedereen krijgt eigen drops en munten. Bekijk je Inventory, claim questbeloningen en koop items in de Market (solo). Craft armor, een focus en een energie-item met drie tiers. Rond de route en het event af, en bevestig daarna Gereed.</p></div><button onclick="showScreen(isSquadMode ? 'squad-lobby' : 'menu')" class="px-6 py-3 rounded-xl bg-cyan-500 text-slate-950 font-extrabold">Snap ik!</button>
+                <div><h3 class="font-bold text-amber-300">Routes, events en crafting</h3><p>Na elk gewonnen gevecht stemt iedereen op één van drie stops. De meeste stemmen winnen; bij gelijkspel wordt geloot. Kies herstel, materialen, onderzoek of een gevecht met meer risico en beloning. Iedereen krijgt eigen drops en munten. Bekijk je Inventory, claim questbeloningen en koop items in de Market. Craft armor, een focus en een energie-item met drie tiers. Rond de route en het event af, en bevestig daarna Gereed.</p></div><button onclick="showScreen(isSquadMode ? 'squad-lobby' : 'menu')" class="px-6 py-3 rounded-xl bg-cyan-500 text-slate-950 font-extrabold">Snap ik!</button>
             </div>
         </section>
 
@@ -639,8 +639,8 @@ button,input,select{font:inherit}button{touch-action:manipulation}button:focus-v
     
     <script>
         // Multiplayer uses authenticated HTTPS requests to this game's own service.
-        const SITE_ORIGIN = 'https://cellular-legends-squad-michael.michaelvanderleeden.chatgpt.site';
-        const MULTIPLAYER_ORIGIN = location.protocol==='http:' && location.hostname==='terminal.local' ? location.origin : SITE_ORIGIN;
+        const SITE_ORIGIN = location.origin;
+        const MULTIPLAYER_ORIGIN = location.origin;
         let myUserId=null,myPlayerName='Cel-Strijder',currentSquadData=null,isSquadMode=false,network=null,connecting=false;
         let actionBusy=false,quizAnswered=false,quizTurn=null,battleSession=0,soloEnemyTimer=null,soloUnlockedLevel=1,lastResult=null;
         let readyRequestPending=false,invitationBusy=false,pendingInvitation=null;
@@ -664,7 +664,7 @@ button,input,select{font:inherit}button{touch-action:manipulation}button:focus-v
                         const headers={};if(this.code)headers.Authorization='Bearer '+this.sessionToken;
                         if(body)headers['Content-Type']='application/json';
                         const response=await fetch(base+path,{method:body?'POST':'GET',headers,body:body?JSON.stringify(body):undefined,cache:'no-store',signal:controller.signal});
-                        let result;try{result=await response.json();}catch{throw new Error('Multiplayer antwoordt niet. Probeer opnieuw.');}
+                        let result;try{result=await response.json();}catch{throw new Error('Multiplayer heeft de gameserver nodig. Open de speellink van de eigen gameserver om een squad te maken.');}
                         if(!response.ok){const error=new Error(result.error||'De verbinding is tijdelijk weg.');error.status=response.status;throw error;}
                         return result;
                     }catch(error){
@@ -676,7 +676,7 @@ button,input,select{font:inherit}button{touch-action:manipulation}button:focus-v
             apply(result){
                 if(this.closed||!result.state)return;
                 if(!result.state.members[myUserId])throw Object.assign(new Error('Je bent geen lid meer van deze squad. Join opnieuw.'),{status:401});
-                const wasOffline=this.unreachable;this.unreachable=false;
+                const wasOffline=this.unreachable;this.unreachable=false;this.host=!!result.host;
                 if(!currentSquadData||result.state.revision!==currentSquadData.revision){
                     const state=clone(result.state);
                     if(state.battle?.deadline)state.battle.deadline+=Date.now()-result.serverTime;
@@ -693,14 +693,14 @@ button,input,select{font:inherit}button{touch-action:manipulation}button:focus-v
                 const result=await this.api('/api/squads/'+this.code+'/join',{name:myPlayerName,invite:invitation.invite,sessionToken:this.sessionToken});
                 this.host=result.host;myUserId=result.playerId;this.apply(result);this.remember();this.startPolling();
             }
-            remember(){try{sessionStorage.setItem('cellular-session-v5',JSON.stringify({code:this.code,token:this.sessionToken,playerId:myUserId,name:myPlayerName}));}catch{}}
+            remember(){try{sessionStorage.setItem('cellular-session-v6',JSON.stringify({code:this.code,token:this.sessionToken,playerId:myUserId,name:myPlayerName}));}catch{}}
             startPolling(){
                 const poll=async()=>{
                     if(this.closed||this.leaving)return;
                     try{this.apply(await this.api('/api/squads/'+this.code));}
                     catch(error){
                         if(this.closed||this.leaving)return;
-                        if([401,404,410].includes(error.status)){this.lostHost(error.message);return;}
+                        if([401,403,404,410].includes(error.status)){this.lostHost(error.message);return;}
                         this.unreachable=true;connectionStatus('Verbinding tijdelijk weg. Je squad blijft staan; opnieuw verbinden…',true);renderSquadLobby();
                     }
                     if(!this.closed&&!this.leaving)this.pollTimer=setTimeout(poll,1000);
@@ -715,7 +715,7 @@ button,input,select{font:inherit}button{touch-action:manipulation}button:focus-v
             }
             async generateInvite(){
                 const result=await this.api('/api/squads/'+this.code+'/invite',{requestId:crypto.randomUUID()});
-                this.inviteUrl=result.inviteUrl;this.apply(result);renderSquadLobby();return this.inviteUrl;
+                this.inviteUrl=new URL(result.inviteUrl,SITE_ORIGIN).href;this.apply(result);renderSquadLobby();return this.inviteUrl;
             }
             lostHost(message){if(this.closed)return;leaveSquadLocally();showScreen('squad-setup');connectionStatus(message,true);showNotification(message,'warning');}
             close(sendLeave=false){
@@ -766,7 +766,7 @@ button,input,select{font:inherit}button{touch-action:manipulation}button:focus-v
         };
         function leaveSquadLocally(){
             resetBattleInteraction();network?.close();network=null;currentSquadData=null;isSquadMode=false;lastResult=null;readyRequestPending=false;invitationBusy=false;
-            try{sessionStorage.removeItem('cellular-session-v5');}catch{}
+            try{sessionStorage.removeItem('cellular-session-v6');}catch{}
             document.getElementById('squad-invitation').value='';document.getElementById('invite-link-output').classList.add('hidden');
             document.getElementById('header-squad-badge').classList.add('hidden');document.getElementById('squad-battle-hud').classList.add('hidden');showScreen('menu');
         }
@@ -804,12 +804,12 @@ button,input,select{font:inherit}button{touch-action:manipulation}button:focus-v
                     document.getElementById('invitation-welcome').classList.remove('hidden');showScreen('squad-setup');
                 }catch(error){showScreen('squad-setup');connectionStatus(error.message,true);}
             }
-            let saved;try{saved=JSON.parse(sessionStorage.getItem('cellular-session-v5')||'null');}catch{}
+            let saved;try{saved=JSON.parse(sessionStorage.getItem('cellular-session-v6')||'null');}catch{}
             if(!saved||network||(pendingInvitation&&pendingInvitation.code!==saved.code))return;
             try{
                 connecting=true;const restored=new SquadNetwork();restored.code=saved.code;restored.sessionToken=saved.token;
                 const result=await restored.api('/api/squads/'+saved.code);myUserId=result.playerId;myPlayerName=saved.name;restored.host=result.host;network=restored;restored.apply(result);restored.startPolling();showScreen(currentSquadData.status==='battle'?'battle':'squad-lobby');
-            }catch{network=null;try{sessionStorage.removeItem('cellular-session-v5');}catch{}}
+            }catch{network=null;try{sessionStorage.removeItem('cellular-session-v6');}catch{}}
             finally{connecting=false;}
         }
         function registerGameTools(){
@@ -1751,13 +1751,12 @@ class SquadEngine{
         }
         function inventoryHTML(s,m,disabled){
             if(!m?.classKey)return '<p class="rest-empty">Kies eerst een klasse.</p>';
-            const inv=m.inventory,locked=disabled||isSquadMode;
+            const inv=m.inventory,locked=disabled;
             return '<div class="panel-title"><h3>Jouw inventory</h3><span>'+(inv.coins??0)+' munten</span></div><p class="panel-note">Materialen, alle verzamelde armors en uitrusting, verbruiksitems en questbeloningen.</p>'+materialsHTML(inv.materials)+
-            '<h3>Uitrusting · '+inv.gear.length+' items</h3><div class="recipe-list">'+(inv.gear.length?inv.gear.map(id=>{const r=GEAR_RECIPES.find(r=>r.id===id);if(!r)return '';const equipped=m.equipment[r.slot]===id;return '<article class="recipe-card '+(equipped?'recipe-equipped':'')+'"><div><span class="recipe-type">'+EQUIPMENT_SLOTS[r.slot]+' · Tier '+r.tier+'</span><h4>'+r.name+'</h4><p>'+r.description+'</p></div><button onclick="equipItem(\''+r.slot+'\','+(equipped?'null':"'"+id+"'")+')" '+(disabled?'disabled':'')+'>'+(equipped?'Afdoen':'Uitrusten')+'</button></article>';}).join(''):'<p class="panel-note">Nog geen uitrusting. Craft een armor of koop er een in Market.</p>')+'</div><h3>Verbruiksitems</h3><div class="recipe-list">'+MARKET_STOCK.filter(o=>o.kind==='item').map(o=>'<article class="recipe-card"><div><h4>'+o.name+' × '+(inv.items?.[o.id]??0)+'</h4><p>'+o.description+'</p></div><button onclick="useInventoryItem(\''+o.id+'\')" '+(locked||!(inv.items?.[o.id])||m[o.id==='health'?'hp':'atp']>=m[o.id==='health'?'maxHp':'maxAtp']?'disabled':'')+'>Gebruiken</button></article>').join('')+'</div><h3>Quests & beloningen</h3><div class="recipe-list">'+CAMPAIGN_QUESTS.map(q=>{const claimed=inv.quests?.includes(q.id),done=s[q.stat]>=q.target;return '<article class="recipe-card"><div><h4>'+q.name+'</h4><p>'+q.description+' '+Math.min(q.target,s[q.stat])+' / '+q.target+'</p><p>+'+q.coins+' munten · '+Object.entries(q.drops).map(([k,n])=>n+' '+MATERIALS[k].short).join(' · ')+' · 1 '+(q.item==='health'?'herstelserum':'ATP-tonicum')+'</p></div><button onclick="claimInventoryQuest(\''+q.id+'\')" '+(locked||claimed||!done?'disabled':'')+'>'+(claimed?'Ontvangen':done?'Claimen':'Bezig')+'</button></article>';}).join('')+'</div>'+(isSquadMode?'<p class="panel-note">Nieuwe questbeloningen en verbruiksitems zijn momenteel beschikbaar in solo.</p>':'<p class="panel-note">Je solo-voortgang wordt automatisch opgeslagen in deze browser. Een nieuwe campagne begint met een lege inventory en 40 munten.</p>');
+            '<h3>Uitrusting · '+inv.gear.length+' items</h3><div class="recipe-list">'+(inv.gear.length?inv.gear.map(id=>{const r=GEAR_RECIPES.find(r=>r.id===id);if(!r)return '';const equipped=m.equipment[r.slot]===id;return '<article class="recipe-card '+(equipped?'recipe-equipped':'')+'"><div><span class="recipe-type">'+EQUIPMENT_SLOTS[r.slot]+' · Tier '+r.tier+'</span><h4>'+r.name+'</h4><p>'+r.description+'</p></div><button onclick="equipItem(\''+r.slot+'\','+(equipped?'null':"'"+id+"'")+')" '+(disabled?'disabled':'')+'>'+(equipped?'Afdoen':'Uitrusten')+'</button></article>';}).join(''):'<p class="panel-note">Nog geen uitrusting. Craft een armor of koop er een in Market.</p>')+'</div><h3>Verbruiksitems</h3><div class="recipe-list">'+MARKET_STOCK.filter(o=>o.kind==='item').map(o=>'<article class="recipe-card"><div><h4>'+o.name+' × '+(inv.items?.[o.id]??0)+'</h4><p>'+o.description+'</p></div><button onclick="useInventoryItem(\''+o.id+'\')" '+(locked||!(inv.items?.[o.id])||m[o.id==='health'?'hp':'atp']>=m[o.id==='health'?'maxHp':'maxAtp']?'disabled':'')+'>Gebruiken</button></article>').join('')+'</div><h3>Quests & beloningen</h3><div class="recipe-list">'+CAMPAIGN_QUESTS.map(q=>{const claimed=inv.quests?.includes(q.id),done=s[q.stat]>=q.target;return '<article class="recipe-card"><div><h4>'+q.name+'</h4><p>'+q.description+' '+Math.min(q.target,s[q.stat])+' / '+q.target+'</p><p>+'+q.coins+' munten · '+Object.entries(q.drops).map(([k,n])=>n+' '+MATERIALS[k].short).join(' · ')+' · 1 '+(q.item==='health'?'herstelserum':'ATP-tonicum')+'</p></div><button onclick="claimInventoryQuest(\''+q.id+'\')" '+(locked||claimed||!done?'disabled':'')+'>'+(claimed?'Ontvangen':done?'Claimen':'Bezig')+'</button></article>';}).join('')+'</div>'+(isSquadMode?'<p class="panel-note">Je squad, inventory en questbeloningen worden opgeslagen op de gameserver.</p>':'<p class="panel-note">Je solo-voortgang wordt automatisch opgeslagen in deze browser. Een nieuwe campagne begint met een lege inventory en 40 munten.</p>');
         }
         function marketHTML(m,disabled){
             if(!m?.classKey)return '<p class="rest-empty">Kies eerst een klasse.</p>';
-            if(isSquadMode)return '<div class="rest-empty"><h3>Market</h3><p>De nieuwe market is beschikbaar in solo. De bestaande externe squadserver ondersteunt nog geen koopacties.</p></div>';
             return '<div class="panel-title"><h3>Golgi-market</h3><span>'+m.inventory.coins+' munten</span></div><p class="panel-note">Verdien munten met vijanden en quests. Koop hier tijdens elke rustpauze. Elke derde route biedt ook een marketstop met 25 bonusmunten.</p><div class="recipe-list">'+MARKET_STOCK.map(o=>{const owned=o.kind==='gear'&&m.inventory.gear.includes(o.id),locked=m.level<(o.level||1),full=o.kind==='material'?m.inventory.materials[o.id]>=999:o.kind==='item'?m.inventory.items[o.id]>=99:false;return '<article class="recipe-card"><div><span class="recipe-type">'+(o.kind==='gear'?'Uitrusting · Lv. '+o.level:o.kind==='material'?'Materiaal':'Verbruiksitem')+'</span><h4>'+o.name+'</h4><p>'+o.description+'</p></div><button onclick="buyMarketItem(\''+o.id+'\')" '+(disabled||owned||locked||full||m.inventory.coins<o.price?'disabled':'')+'>'+(owned?'In bezit':locked?'Level '+o.level:full?'Voorraad vol':o.price+' munten')+'</button></article>';}).join('')+'</div>';
         }
         window.newSoloCampaign=function(){if(!confirm('Een nieuwe expeditie starten? Je huidige solo-voortgang wordt gewist.'))return;try{localStorage.removeItem('cellular-solo-v1');}catch{}soloEngine=null;startSoloMode();};
@@ -2009,7 +2008,7 @@ class SquadEngine{
             if(!canAct())return;const m=activeMember(),hero=HERO_CLASSES[m.classKey];
             document.getElementById('skills-list-container').innerHTML='<p class="text-sm text-cyan-200">Aanval → '+escapeHTML(actorLabel(selectedEnemyId))+' · Healing → '+escapeHTML(actorLabel(selectedAllyId))+'</p>'+hero.skills.map(skill=>{
                 const locked=m.level<skill.unlock,cooldown=skillCooldownRemaining(m,skill,activeCampaign().battle),disabled=locked||cooldown>0||m.atp<skill.cost;
-                return '<button onclick="selectSkill(\''+skill.id+'\')" '+(disabled?'disabled':'')+' class="skill-choice '+(locked?'move-locked':'')+'"><div><b>'+escapeHTML(skill.name)+(skill.target.startsWith('all-')?' <span class="aoe-tag">AOE</span>':'')+'</b><p>'+escapeHTML(skill.desc)+(!isSquadMode?' Na succes: '+skill.cooldown+' ronde(n) cooldown. Bij falen: ATP kwijt, schild, geen cooldown.':'')+'</p></div><span>'+skill.cost+' ATP<br>'+(locked?'Level '+skill.unlock:cooldown?'Cooldown: '+cooldown+' ronde(n)':'Beschikbaar')+'</span></button>';
+                return '<button onclick="selectSkill(\''+skill.id+'\')" '+(disabled?'disabled':'')+' class="skill-choice '+(locked?'move-locked':'')+'"><div><b>'+escapeHTML(skill.name)+(skill.target.startsWith('all-')?' <span class="aoe-tag">AOE</span>':'')+'</b><p>'+escapeHTML(skill.desc)+(' Na succes: '+skill.cooldown+' ronde(n) cooldown. Bij falen: ATP kwijt, schild, geen cooldown.')+'</p></div><span>'+skill.cost+' ATP<br>'+(locked?'Level '+skill.unlock:cooldown?'Cooldown: '+cooldown+' ronde(n)':'Beschikbaar')+'</span></button>';
             }).join('');document.getElementById('skills-modal').classList.remove('hidden');
         };
         window.closeSkillMenu=()=>document.getElementById('skills-modal').classList.add('hidden');
@@ -2025,10 +2024,22 @@ class SquadEngine{
         window.closeItemMenu=()=>document.getElementById('items-modal').classList.add('hidden');
         window.useItem=function(itemId){if(!canAct())return;closeItemMenu();commitAction({type:'item',itemId});};
         let quizAnswerIndex=-1;
-        function openQuizModal(){
+        async function openQuizModal(){
             prepareCombatAudio();
-            const m=activeMember();currentQuizData=chooseQuestion(m);const difficulty=questionDifficulty(currentQuizData);
-            quizAnswered=false;quizAnswerIndex=-1;const b=activeCampaign().battle;quizTurn={battleId:b.id,turnNumber:b.turnNumber};
+            const m=activeMember(),b=activeCampaign().battle,session=battleSession;
+            const turn={battleId:b.id,turnNumber:b.turnNumber};
+            quizAnswered=false;quizAnswerIndex=-1;quizTurn=turn;
+            if(isSquadMode){
+                actionBusy=true;enableBattleActions(false);
+                try{
+                    const result=await network.api('/api/squads/'+network.code+'/quiz',turn);
+                    const current=activeCampaign()?.battle;
+                    if(session!==battleSession||!isSquadMode||!gameState.pendingAction||current?.id!==turn.battleId||current.turnNumber!==turn.turnNumber)return;
+                    currentQuizData=result.question;
+                }catch(error){gameState.pendingAction=null;quizTurn=null;showNotification(error.message,'error');return;}
+                finally{actionBusy=false;if(isSquadMode)syncSquadBattleState();}
+            }else currentQuizData=chooseQuestion(m);
+            const difficulty=questionDifficulty(currentQuizData);
             document.getElementById('quiz-difficulty-badge').textContent='Niveau: '+QUESTION_MODES[difficulty];
             document.getElementById('quiz-topic-badge').textContent=currentQuizData.topic;
             document.getElementById('quiz-question-text').textContent=currentQuizData.question;
@@ -2061,7 +2072,7 @@ class SquadEngine{
             title.textContent = correct ? 'Juist Antwoord! (+150 Score)' : selectedIdx === -1 ? 'Tijd Om!' : 'Helaas, Onjuist!';
             title.className = `font-bold text-base ${correct ? 'text-emerald-400' : 'text-rose-400'}`;
             const pendingSkill=gameState.pendingAction?.type==='skill'?availableSkills(activeMember()).find(skill=>skill.id===gameState.pendingAction.skillId):null;
-            const consequence=pendingSkill&&!isSquadMode?(correct?' Deze move kost '+pendingSkill.cost+' ATP en krijgt '+pendingSkill.cooldown+' ronde(n) cooldown.':' Deze move kost '+pendingSkill.cost+' ATP. In plaats van de move krijg je Membraan Schild: de volgende aanval doet 50% minder schade. Geen cooldown.'):'';
+            const consequence=pendingSkill?(correct?' Deze move kost '+pendingSkill.cost+' ATP en krijgt '+pendingSkill.cooldown+' ronde(n) cooldown.':' Deze move kost '+pendingSkill.cost+' ATP. In plaats van de move krijg je Membraan Schild: de volgende aanval doet 50% minder schade. Geen cooldown.'):'';
             document.getElementById('quiz-feedback-desc').textContent = currentQuizData.explanation+consequence;
             document.getElementById('quiz-feedback-box').classList.remove('hidden');
             document.getElementById('quiz-continue-btn').disabled = false;

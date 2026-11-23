@@ -373,6 +373,272 @@ button,input,select{font:inherit}button{touch-action:manipulation}button:focus-v
     }
 </style>
 
+
+<style id="cellular-legends-visual-upgrade">
+    /* Character art and class selection */
+    .class-art-preview {
+        display:flex;align-items:center;justify-content:center;min-height:132px;
+        margin:-.45rem -.25rem .7rem;border-radius:1.2rem;overflow:hidden;
+        background:radial-gradient(circle at 50% 55%,rgba(34,211,238,.15),transparent 62%),
+                   linear-gradient(135deg,rgba(15,23,42,.8),rgba(30,41,59,.25));
+        border:1px solid rgba(148,163,184,.13);position:relative;
+    }
+    .class-art-preview::after {
+        content:"";position:absolute;inset:12px;border:1px solid rgba(148,163,184,.12);
+        border-radius:50%;pointer-events:none;
+    }
+    .class-art-preview svg { width:116px;height:116px;filter:drop-shadow(0 0 13px var(--actor-color,#22d3ee));animation:hero-hover 4.6s ease-in-out infinite; }
+    .actor-sprite svg { filter:drop-shadow(0 0 8px color-mix(in srgb,var(--actor-color,#67e8f9) 55%,transparent)); }
+    .player-actor .actor-sprite svg { animation:hero-idle 4s ease-in-out infinite; }
+    .enemy-actor .actor-sprite svg { animation:enemy-idle 3.2s ease-in-out infinite; }
+    .actor-current .actor-sprite svg { filter:drop-shadow(0 0 12px var(--actor-color)) drop-shadow(0 0 24px var(--actor-color)); }
+    .enemy-actor:has(.actor-role:first-child) { --enemy-glow:#fb7185; }
+
+    @keyframes hero-hover { 0%,100%{transform:translateY(2px) rotate(-2deg)}50%{transform:translateY(-7px) rotate(2deg)} }
+    @keyframes hero-idle { 0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-3px) rotate(1deg)} }
+    @keyframes enemy-idle { 0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(1.035)} }
+
+    /* The four campaign regions become distinct living biomes. */
+    #battle-arena-card {
+        isolation:isolate;
+        background-size:cover;
+        background-position:center;
+        transition:background .35s ease,border-color .35s ease;
+    }
+    #battle-arena-card::before {
+        content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.5;
+        background-image:radial-gradient(circle at 12% 20%,rgba(103,232,249,.2) 0 1px,transparent 2px),
+                         radial-gradient(circle at 82% 26%,rgba(196,181,253,.2) 0 1px,transparent 2px),
+                         radial-gradient(circle at 64% 82%,rgba(251,191,36,.2) 0 1px,transparent 2px);
+        background-size:65px 65px,83px 83px,105px 105px;
+        animation:biome-drift 22s linear infinite;
+    }
+    #battle-arena-card::after {
+        content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+        background:linear-gradient(115deg,transparent 10%,rgba(255,255,255,.035) 45%,transparent 75%);
+        opacity:.7;
+    }
+    #battle-arena-card.biome-1 { background-image:radial-gradient(ellipse at 18% 80%,#0e749044,transparent 42%),radial-gradient(ellipse at 85% 15%,#164e6388,transparent 40%),linear-gradient(145deg,#071b2b,#0b1728 55%,#102a3a)!important; }
+    #battle-arena-card.biome-2 { background-image:radial-gradient(ellipse at 25% 85%,#7c3aed44,transparent 42%),radial-gradient(ellipse at 83% 20%,#4338ca55,transparent 42%),linear-gradient(145deg,#16102c,#111b34 55%,#26143c)!important; }
+    #battle-arena-card.biome-3 { background-image:radial-gradient(ellipse at 20% 80%,#ea580c55,transparent 40%),radial-gradient(ellipse at 85% 15%,#fbbf2440,transparent 38%),linear-gradient(145deg,#241526,#261b2b 55%,#3a1e22)!important; }
+    #battle-arena-card.biome-4 { background-image:radial-gradient(ellipse at 20% 80%,#be185d55,transparent 40%),radial-gradient(ellipse at 85% 15%,#7e22ce55,transparent 38%),linear-gradient(145deg,#1b1029,#231329 55%,#341528)!important; }
+    @keyframes biome-drift { from{background-position:0 0,0 0,0 0}to{background-position:120px 80px,-80px 130px,100px -100px} }
+
+    /* Four-regions campaign map with 24 connected stage nodes. */
+    .campaign-map {
+        display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.55rem;margin-top:.7rem;
+    }
+    .campaign-region {
+        position:relative;overflow:hidden;min-width:0;padding:.55rem .65rem .6rem;
+        border:1px solid rgba(148,163,184,.2);border-radius:.85rem;
+        background:linear-gradient(135deg,rgba(15,23,42,.95),rgba(30,41,59,.72));
+        isolation:isolate;
+    }
+    .campaign-region::before {
+        content:"";position:absolute;inset:0;z-index:-1;opacity:.3;
+        background:radial-gradient(circle at 95% 8%,var(--region-glow),transparent 55%);
+    }
+    .campaign-region-cyan { --region-glow:#06b6d4;--region-color:#67e8f9; }
+    .campaign-region-violet { --region-glow:#8b5cf6;--region-color:#c4b5fd; }
+    .campaign-region-orange { --region-glow:#f97316;--region-color:#fdba74; }
+    .campaign-region-pink { --region-glow:#ec4899;--region-color:#f9a8d4; }
+    .campaign-region-heading { display:flex;align-items:center;gap:.5rem;min-width:0;position:relative;z-index:2; }
+    .campaign-region-symbol {
+        display:grid;place-items:center;width:27px;height:27px;border-radius:9px;flex:none;
+        background:color-mix(in srgb,var(--region-color) 18%,transparent);
+        border:1px solid color-mix(in srgb,var(--region-color) 45%,transparent);
+        color:var(--region-color);font-size:.75rem;font-weight:900;
+    }
+    .campaign-region-heading>div { min-width:0;flex:1; }
+    .campaign-region-heading b { display:block;color:#f1f5f9;font-size:.72rem;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+    .campaign-region-heading small { display:block;color:#94a3b8;font-size:.62rem;line-height:1.2;margin-top:2px; }
+    .campaign-region-heading strong { color:var(--region-color);font-size:.7rem;font-variant-numeric:tabular-nums; }
+    .campaign-region-route { display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:.2rem;position:relative;margin-top:.65rem;z-index:2; }
+    .campaign-region-route::before {
+        content:"";position:absolute;left:8%;right:8%;top:50%;height:2px;
+        background:linear-gradient(90deg,var(--region-color),rgba(148,163,184,.2));
+        opacity:.55;z-index:-1;
+    }
+    .campaign-node { display:grid;place-items:center;position:relative;min-width:0; }
+    .campaign-node>span {
+        display:grid;place-items:center;width:22px;height:22px;border-radius:50%;
+        border:1px solid rgba(148,163,184,.35);background:#0f172a;color:#94a3b8;
+        font-size:.55rem;font-weight:900;box-shadow:0 2px 9px #02061788;
+    }
+    .campaign-node.node-cleared>span {
+        color:#052e16;background:#6ee7b7;border-color:#a7f3d0;
+        box-shadow:0 0 10px #34d39977;
+    }
+    .campaign-node.node-current>span {
+        color:#07101d;background:var(--region-color);border:2px solid white;
+        box-shadow:0 0 0 4px color-mix(in srgb,var(--region-color) 24%,transparent),0 0 19px var(--region-color);
+        animation:map-node-pulse 1.8s ease-in-out infinite;
+    }
+    .campaign-node.node-boss>span { border-radius:7px;border-color:#fbbf24;color:#fbbf24; }
+    .campaign-node.node-boss.node-cleared>span { background:#fbbf24;color:#451a03;border-color:#fef3c7; }
+    .campaign-node.node-boss.node-current>span { background:#fbbf24;color:#451a03; }
+    .campaign-region-landscape {
+        position:absolute;right:-5px;bottom:-23px;width:104px;height:90px;opacity:.13;
+        pointer-events:none;z-index:1;transform:rotate(-8deg);
+    }
+    .campaign-region-landscape svg { width:100%;height:100%; }
+    @keyframes map-node-pulse { 0%,100%{transform:scale(1)}50%{transform:scale(1.13)} }
+
+    /* Route selection reads like a set of destination cards, not plain buttons. */
+    .route-options-premium { align-items:stretch;gap:.8rem; }
+    .route-card {
+        position:relative;overflow:hidden;padding:.75rem;border-radius:1rem;
+        background:linear-gradient(155deg,#111f35,#091523 72%)!important;
+        border:1px solid rgba(148,163,184,.25);
+        box-shadow:0 8px 24px rgba(2,6,23,.2);
+        transform:translateY(0);transition:transform .22s,border-color .22s,box-shadow .22s;
+    }
+    .route-card::after {
+        content:"";position:absolute;inset:0;pointer-events:none;opacity:0;
+        background:linear-gradient(115deg,transparent 10%,rgba(255,255,255,.09) 48%,transparent 82%);
+        transform:translateX(-80%);transition:opacity .2s;
+    }
+    .route-card:enabled:hover { transform:translateY(-5px) scale(1.012);box-shadow:0 15px 33px rgba(2,6,23,.4),0 0 20px color-mix(in srgb,var(--route-color) 22%,transparent); }
+    .route-card:enabled:hover::after { opacity:1;animation:route-shimmer .8s ease; }
+    .route-tone-aqua { --route-color:#22d3ee; }
+    .route-tone-violet { --route-color:#c084fc; }
+    .route-tone-gold { --route-color:#fbbf24; }
+    .route-tone-crimson { --route-color:#fb7185; }
+    .route-tone-blue { --route-color:#60a5fa; }
+    .route-tone-pink { --route-color:#f472b6; }
+    .route-art {
+        position:relative;display:block;height:104px;overflow:hidden;border-radius:.75rem;
+        margin-bottom:.15rem;border:1px solid color-mix(in srgb,var(--route-color) 38%,transparent);
+        background:radial-gradient(circle at 50% 48%,color-mix(in srgb,var(--route-color) 25%,transparent),transparent 58%),
+                   linear-gradient(140deg,color-mix(in srgb,var(--route-color) 15%,#0f172a),#07101d 75%);
+        isolation:isolate;
+    }
+    .route-art-grid {
+        position:absolute;inset:-35%;opacity:.16;
+        background-image:linear-gradient(color-mix(in srgb,var(--route-color) 55%,transparent) 1px,transparent 1px),
+                         linear-gradient(90deg,color-mix(in srgb,var(--route-color) 55%,transparent) 1px,transparent 1px);
+        background-size:18px 18px;transform:perspective(70px) rotateX(42deg) scale(1.4);
+    }
+    .route-art-orbit {
+        position:absolute;left:50%;top:46%;border:1.5px solid var(--route-color);
+        border-radius:50%;transform:translate(-50%,-50%) rotate(-25deg);
+        box-shadow:0 0 15px color-mix(in srgb,var(--route-color) 38%,transparent);
+    }
+    .route-art-orbit-one { width:76px;height:45px; }
+    .route-art-orbit-two { width:53px;height:84px;transform:translate(-50%,-50%) rotate(55deg);opacity:.55; }
+    .route-art-core {
+        position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);
+        display:grid;place-items:center;width:40px;height:40px;border-radius:14px;
+        color:var(--route-color);font-size:1.65rem;font-weight:900;
+        background:color-mix(in srgb,var(--route-color) 15%,#0f172a);
+        border:1px solid color-mix(in srgb,var(--route-color) 70%,transparent);
+        box-shadow:0 0 24px color-mix(in srgb,var(--route-color) 45%,transparent);
+        animation:route-core-float 3.4s ease-in-out infinite;
+    }
+    .route-art-spark { position:absolute;width:5px;height:5px;border-radius:50%;background:#fff;box-shadow:0 0 12px var(--route-color); }
+    .route-art-spark-one { left:23%;top:27%; }
+    .route-art-spark-two { right:22%;top:63%;width:3px;height:3px; }
+    .route-art-spark-three { left:32%;bottom:15%;width:4px;height:4px; }
+    .route-art-label {
+        position:absolute;left:.55rem;bottom:.45rem;color:var(--route-color);
+        font-size:.56rem;font-weight:900;letter-spacing:.16em;text-shadow:0 1px 5px #020617;
+    }
+    .route-card .route-kind { color:var(--route-color);text-transform:uppercase;letter-spacing:.04em;font-size:.65rem; }
+    .route-card .route-kind svg { filter:drop-shadow(0 0 5px var(--route-color)); }
+    .route-card>b { font-size:1rem;color:#f8fafc;line-height:1.25; }
+    .route-subtitle { display:block;color:var(--route-color);font-size:.72rem;font-weight:800;letter-spacing:.02em;margin-top:-.25rem; }
+    .route-card p { font-size:.78rem;line-height:1.5;color:#b6c7dc; }
+    .route-card .route-reward { display:flex;gap:.4rem;align-items:flex-start;font-size:.76rem;line-height:1.45;color:#bbf7d0; }
+    .route-card .route-reward svg { width:15px;height:15px;flex:none;margin-top:1px; }
+    .route-card .route-voters { font-size:.69rem;position:relative;z-index:2; }
+    .route-card .route-voters strong { color:var(--route-color); }
+    .route-card.route-voted { border-color:var(--route-color);box-shadow:inset 0 0 0 1px var(--route-color),0 0 22px color-mix(in srgb,var(--route-color) 18%,transparent); }
+    .route-card.route-winner { border-color:#34d399;box-shadow:inset 0 0 0 1px #34d399,0 0 24px #34d39933; }
+    @keyframes route-shimmer { from{transform:translateX(-80%)}to{transform:translateX(80%)} }
+    @keyframes route-core-float { 0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-56%) scale(1.08)} }
+
+    /* Big, move-specific spell VFX on top of the shared battlefield. */
+    .battle-vfx {
+        position:absolute;z-index:18;width:var(--vfx-size,160px);height:var(--vfx-size,160px);
+        transform:translate(-50%,-50%);pointer-events:none;border-radius:50%;
+        color:var(--vfx-color,#67e8f9);mix-blend-mode:screen;
+        filter:drop-shadow(0 0 12px var(--vfx-color));
+        animation:vfx-entry 1.15s cubic-bezier(.15,.7,.25,1) both;
+    }
+    .vfx-ring,.vfx-core,.vfx-particle { position:absolute;left:50%;top:50%;display:block; }
+    .vfx-ring { width:62%;height:62%;border:3px solid currentColor;border-radius:50%;transform:translate(-50%,-50%) scale(.15);opacity:0; }
+    .vfx-ring-one { animation:vfx-ring-expand .85s ease-out both; }
+    .vfx-ring-two { width:88%;height:88%;border-style:dashed;border-width:2px;animation:vfx-ring-expand 1s .1s ease-out both; }
+    .vfx-core {
+        width:22%;height:22%;border-radius:50%;
+        background:radial-gradient(circle,#fff 0 12%,currentColor 42%,transparent 78%);
+        box-shadow:0 0 26px currentColor,0 0 55px currentColor;
+        transform:translate(-50%,-50%) scale(.1);animation:vfx-core-pop .75s cubic-bezier(.18,.9,.3,1.4) both;
+    }
+    .vfx-particle {
+        width:7px;height:18px;border-radius:8px;background:linear-gradient(#fff,currentColor);
+        box-shadow:0 0 12px currentColor;transform:translate(-50%,-50%) rotate(var(--particle-angle)) translateY(0);
+        animation:vfx-particle-burst .8s var(--particle-delay) ease-out both;
+    }
+    .vfx-claw .vfx-ring { border-radius:22%;transform:translate(-50%,-50%) rotate(35deg) scale(.2); }
+    .vfx-shield .vfx-ring { border-radius:24% 24% 44% 44%; }
+    .vfx-beam .vfx-core { width:8%;height:115%;border-radius:100%; }
+    .vfx-storm .vfx-ring { border-width:5px;border-radius:28%; }
+    .vfx-mist { filter:blur(1px) drop-shadow(0 0 8px #94a3b8); }
+    .vfx-nova .vfx-core { width:38%;height:38%; }
+    @keyframes vfx-entry { 0%{opacity:0;scale:.55}18%{opacity:1}75%{opacity:1}100%{opacity:0;scale:1.25} }
+    @keyframes vfx-ring-expand { 0%{opacity:0;transform:translate(-50%,-50%) scale(.12) rotate(-35deg)}25%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(1.35) rotate(35deg)} }
+    @keyframes vfx-core-pop { 0%{transform:translate(-50%,-50%) scale(.05)}35%{transform:translate(-50%,-50%) scale(1.2)}100%{transform:translate(-50%,-50%) scale(.2);opacity:0} }
+    @keyframes vfx-particle-burst { 0%{opacity:0;transform:translate(-50%,-50%) rotate(var(--particle-angle)) translateY(0) scale(.3)}20%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) rotate(var(--particle-angle)) translateY(calc(var(--vfx-size)*-.42)) scale(.05)} }
+
+    .move-cast-fagocytose .actor-sprite { animation:cast-claw .9s ease both; }
+    .move-cast-lysosoom_bom .actor-sprite { animation:cast-slam .95s ease both; }
+    .move-cast-membraan_bastion .actor-sprite,.move-cast-levenskern .actor-sprite { animation:cast-aura 1s ease both; }
+    .move-cast-immuun_charge .actor-sprite { animation:cast-dash .95s ease both; }
+    .move-cast-katalyse .actor-sprite,.move-cast-substraat_overdrive .actor-sprite { animation:cast-focus .9s ease both; }
+    .move-cast-enzym_golf .actor-sprite,.move-cast-kettingreactie .actor-sprite { animation:cast-storm 1.05s ease both; }
+    .move-cast-eiwit_synthese .actor-sprite,.move-cast-herstel_golf .actor-sprite { animation:cast-heal 1s ease both; }
+    .move-cast-atp_boost .actor-sprite { animation:cast-charge .9s ease both; }
+    .move-cast-crossing_over .actor-sprite { animation:cast-slash .85s ease both; }
+    .move-cast-dna_focus .actor-sprite { animation:cast-orbit 1s ease both; }
+    .move-cast-reductiedeling .actor-sprite,.move-cast-replicatie_combo .actor-sprite { animation:cast-nova 1.05s ease both; }
+    .move-hit-fagocytose,.move-hit-crossing_over { animation:hit-slash .6s ease both!important; }
+    .move-hit-lysosoom_bom,.move-hit-reductiedeling { animation:hit-burst .7s ease both!important; }
+    .move-hit-kettingreactie,.move-hit-replicatie_combo { animation:hit-shock .7s ease both!important; }
+    .move-hit-eiwit_synthese,.move-hit-herstel_golf,.move-hit-levenskern { animation:heal-pulse .85s ease both!important; }
+    .class-cast-macrofaag .actor-sprite { filter:drop-shadow(0 0 13px #22d3ee); }
+    .class-cast-enzym .actor-sprite { filter:drop-shadow(0 0 14px #c084fc); }
+    .class-cast-ribosoom .actor-sprite { filter:drop-shadow(0 0 14px #34d399); }
+    .class-cast-chromosoom .actor-sprite { filter:drop-shadow(0 0 14px #fbbf24); }
+    @keyframes cast-claw { 0%,100%{transform:translateX(0) rotate(0)}25%{transform:translateX(7px) rotate(-12deg) scale(1.2)}50%{transform:translateX(18px) rotate(12deg) scale(1.12)}75%{transform:translateX(0) rotate(-4deg)} }
+    @keyframes cast-slam { 0%,100%{transform:translateY(0) scale(1)}30%{transform:translateY(-13px) scale(1.2)}60%{transform:translateY(7px) scale(.86)} }
+    @keyframes cast-aura { 0%,100%{transform:scale(1)}35%{transform:scale(1.27)}65%{transform:scale(1.08)} }
+    @keyframes cast-dash { 0%,100%{transform:translateX(0)}25%{transform:translateX(-9px) scale(.9)}60%{transform:translateX(25px) scale(1.2)} }
+    @keyframes cast-focus { 0%,100%{transform:scale(1)}45%{transform:scale(1.3) rotate(8deg)} }
+    @keyframes cast-storm { 0%,100%{transform:rotate(0) scale(1)}30%{transform:rotate(-12deg) scale(1.2)}60%{transform:rotate(12deg) scale(1.16)} }
+    @keyframes cast-heal { 0%,100%{transform:scale(1)}30%{transform:scale(1.24)}65%{transform:scale(1.08)} }
+    @keyframes cast-charge { 0%,100%{transform:scale(1)}45%{transform:scale(1.3)} }
+    @keyframes cast-slash { 0%,100%{transform:rotate(0) translateX(0)}35%{transform:rotate(-18deg) translateX(7px)}65%{transform:rotate(18deg) translateX(13px)} }
+    @keyframes cast-orbit { 0%,100%{transform:rotate(0) scale(1)}50%{transform:rotate(180deg) scale(1.18)} }
+    @keyframes cast-nova { 0%,100%{transform:scale(1)}30%{transform:scale(1.35)}65%{transform:scale(.9)} }
+    @keyframes hit-slash { 25%{transform:translateX(7px) skewX(-9deg);filter:brightness(1.8)}65%{transform:translateX(-4px)} }
+    @keyframes hit-burst { 30%{transform:scale(1.13);filter:brightness(1.9)}60%{transform:scale(.96)} }
+    @keyframes hit-shock { 20%,70%{transform:translateX(-5px) scale(1.04);filter:brightness(1.7)}45%{transform:translateX(5px) scale(.96)} }
+    @media(max-width:850px) {
+        .campaign-map { grid-template-columns:1fr; }
+        .campaign-region-landscape { width:90px;height:75px; }
+    }
+    @media(max-width:600px) {
+        .route-options-premium { grid-template-columns:1fr; }
+        .route-art { height:86px; }
+        .class-art-preview { min-height:116px; }
+        .class-art-preview svg { width:104px;height:104px; }
+    }
+    @media(prefers-reduced-motion:reduce) {
+        .battle-vfx,.class-art-preview svg,.actor-sprite svg,.campaign-node.node-current>span,.route-art-core { animation:none!important; }
+    }
+</style>
+
 </head>
 <body class="h-full flex flex-col bg-slate-950 text-slate-100 overflow-x-hidden">
 
@@ -1951,9 +2217,25 @@ class SquadEngine{
         }
         function resourceBarHTML(current,max,type){return '<div class="resource-line resource-'+type+'"><div><b>'+(type==='hp'?'HP':'ATP · mana')+'</b><span>'+current+' / '+max+'</span></div><div class="resource-track" role="progressbar" aria-label="'+(type==='hp'?'Gezondheid':'ATP, mana')+'" aria-valuenow="'+current+'" aria-valuemin="0" aria-valuemax="'+max+'"><span style="width:'+Math.min(100,Math.round(current/max*100))+'%"></span></div></div>';}
         function campaignSummaryHTML(s){
-            const done=s.stageIndex>=CAMPAIGN_LENGTH,info=encounterInfo(s.stageIndex,Object.keys(s.members).length);let steps='';
-            for(let i=0;i<CAMPAIGN_LENGTH;i++)steps+='<span title="Stage '+(i+1)+(i%6===5?' · boss':'')+'" class="campaign-step '+(i<s.stageIndex?'step-done':i===s.stageIndex?'step-now':'')+' '+(i%6===5?'step-boss':'')+'"></span>';
-            return '<div class="campaign-caption"><b>'+(done?'Campagne voltooid':s.battle?.result==='defeat'?'Stage '+(s.stageIndex+1)+' opnieuw':info.region+' · '+(info.isBoss?'Boss':info.title))+'</b><span>'+(done?'24 / 24':(s.stageIndex+1)+' / 24')+' stages · '+s.teamKills+' teamkills</span></div><div class="campaign-steps" aria-label="'+s.stageIndex+' van 24 stages gehaald">'+steps+'</div>';
+            const done=s.stageIndex>=CAMPAIGN_LENGTH,info=encounterInfo(s.stageIndex,Object.keys(s.members).length);
+            const regions=[
+                {name:'Cytoplasma Plains',sub:'De levende buitenwereld',tone:'cyan'},
+                {name:'ER & Golgi Highway',sub:'Transport en verwerking',tone:'violet'},
+                {name:'Mitochondrial Reactor',sub:'De energiezone',tone:'orange'},
+                {name:'The Nucleus Gate',sub:'De genetische kern',tone:'pink'}
+            ];
+            let map='';
+            for(let region=1;region<=4;region++){
+                const meta=regions[region-1],start=(region-1)*6;
+                const completed=Math.max(0,Math.min(6,s.stageIndex-start));
+                let nodes='';
+                for(let step=0;step<6;step++){
+                    const index=start+step,current=!done&&index===s.stageIndex,boss=step===5,cleared=index<s.stageIndex;
+                    nodes+='<span class="campaign-node '+(cleared?'node-cleared ':'')+(current?'node-current ':'')+(boss?'node-boss':'')+'" title="Stage '+(index+1)+(boss?' · Boss':'')+'" aria-label="Stage '+(index+1)+(cleared?' voltooid':current?' huidige stage':'')+'"><span>'+(boss?'★':String(index+1).padStart(2,'0'))+'</span></span>';
+                }
+                map+='<div class="campaign-region campaign-region-'+meta.tone+'"><div class="campaign-region-heading"><span class="campaign-region-symbol">'+region+'</span><div><b>'+meta.name+'</b><small>'+meta.sub+'</small></div><strong>'+completed+'/6</strong></div><div class="campaign-region-route">'+nodes+'</div><div class="campaign-region-landscape">'+regionScenerySVG(region)+'</div></div>';
+            }
+            return '<div class="campaign-caption"><b>'+(done?'Campagne voltooid':s.battle?.result==='defeat'?'Stage '+(s.stageIndex+1)+' opnieuw':info.region+' · '+(info.isBoss?'Boss':info.title))+'</b><span>'+(done?'24 / 24':(s.stageIndex+1)+' / 24')+' stages · '+s.teamKills+' teamkills</span></div><div class="campaign-map" aria-label="Campagnekaart met vier regio’s en 24 stages">'+map+'</div>';
         }
         window.setRestTab=function(prefix,tab){
             if(!REST_TAB_NAMES.includes(tab))return;restTabs[prefix]=tab;
@@ -2002,11 +2284,27 @@ class SquadEngine{
         window.useInventoryItem=itemId=>campaignCommand('use-item',{itemId});
         window.claimInventoryQuest=questId=>campaignCommand('claim-quest',{questId});
         function routeHTML(s,m,disabled){
-            const route=s.journey;if(!route)return '<div class="rest-empty"><h3>'+(s.stageIndex>=CAMPAIGN_LENGTH?'De celkern is bevrijd!':'De expeditie begint')+'</h3><p>'+(s.stageIndex>=CAMPAIGN_LENGTH?'Een nieuwe campagne begint met lege uitrusting en level 1.':'Na elk gewonnen gevecht kiezen jullie samen één van drie stops. Nu staat de eerste verkenning klaar.')+'</p></div>';
+            const route=s.journey;
+            if(!route)return '<div class="rest-empty"><h3>'+(s.stageIndex>=CAMPAIGN_LENGTH?'De celkern is bevrijd!':'De expeditie begint')+'</h3><p>'+(s.stageIndex>=CAMPAIGN_LENGTH?'Een nieuwe campagne begint met lege uitrusting en level 1.':'Na elk gewonnen gevecht kiezen jullie samen één van drie stops. Nu staat de eerste verkenning klaar.')+'</p></div>';
             const me=m?.id,voted=route.votes[me],count=Object.keys(route.votes).filter(id=>s.members[id]).length;
-            let html='<div class="panel-title"><h3>Kies de volgende stop</h3><span>'+(route.status==='voting'?count+' / '+Object.keys(s.members).length+' stemmen':'Route gekozen')+'</span></div><p class="panel-note">Iedereen stemt en mag de stem wijzigen zolang de rest nog kiest. Meeste stemmen wint; bij gelijke stand wordt geloot.</p><div class="route-options">'+route.options.map(option=>{
-                const names=Object.entries(route.votes).filter(([id,vote])=>s.members[id]&&vote===option.id).map(([id])=>s.members[id].name),selected=voted===option.id,winner=route.winnerId===option.id;
-                return '<button class="route-option '+(selected?'route-voted':'')+' '+(winner?'route-winner':'')+'" onclick="voteRoute(\''+route.id+'\',\''+option.id+'\')" '+(disabled||!m?.classKey||route.status!=='voting'?'disabled':'')+' aria-pressed="'+selected+'"><span class="route-kind"><i data-lucide="'+option.icon+'"></i>'+option.type+'</span><b>'+option.name+'</b><p>'+option.description+'</p><span class="route-reward">'+option.reward+'</span><span class="route-voters">'+(winner?'Gekozen · ':selected?'Jouw stem · ':'')+escapeHTML(names.join(', ')||'Nog geen stemmen')+'</span></button>';
+            const visuals={
+                spring:{tag:'LIFE SPRING',subtitle:'Herstel-oase',tone:'aqua',symbol:'✦'},
+                lab:{tag:'RESEARCH',subtitle:'Onderzoekslab',tone:'violet',symbol:'⌬'},
+                depot:{tag:'SUPPLY CACHE',subtitle:'Golgi-depot',tone:'gold',symbol:'⬡'},
+                tunnel:{tag:'HIGH RISK',subtitle:'Lysosoomtunnel',tone:'crimson',symbol:'⚡'},
+                shelter:{tag:'SAFE HAVEN',subtitle:'Membraanschuilplaats',tone:'blue',symbol:'◈'},
+                archive:{tag:'RARE DISCOVERY',subtitle:'DNA-archief',tone:'pink',symbol:'⌘'},
+                market:{tag:'TRADE OUTPOST',subtitle:'Golgi-market',tone:'gold',symbol:'✧'}
+            };
+            let html='<div class="panel-title route-panel-heading"><h3>Plan je volgende route</h3><span>'+(route.status==='voting'?count+' / '+Object.keys(s.members).length+' stemmen':'Route gekozen')+'</span></div><p class="panel-note">Kies samen één bestemming. Iedere route heeft een eigen voordeel — en sommige brengen extra risico met zich mee.</p><div class="route-options route-options-premium">'+route.options.map((option,index)=>{
+                const names=Object.entries(route.votes).filter(([id,vote])=>s.members[id]&&vote===option.id).map(([id])=>s.members[id].name),selected=voted===option.id,winner=route.winnerId===option.id,visual=visuals[option.id]||visuals.lab;
+                return '<button class="route-option route-card route-card-'+escapeHTML(option.id)+' route-tone-'+visual.tone+' '+(selected?'route-voted':'')+' '+(winner?'route-winner':'')+'" onclick="voteRoute(\''+route.id+'\',\''+option.id+'\')" '+(disabled||!m?.classKey||route.status!=='voting'?'disabled':'')+' aria-pressed="'+selected+'">' +
+                    '<span class="route-art" aria-hidden="true"><span class="route-art-grid"></span><span class="route-art-orbit route-art-orbit-one"></span><span class="route-art-orbit route-art-orbit-two"></span><span class="route-art-core">'+visual.symbol+'</span><span class="route-art-spark route-art-spark-one"></span><span class="route-art-spark route-art-spark-two"></span><span class="route-art-spark route-art-spark-three"></span><span class="route-art-label">'+visual.tag+'</span></span>' +
+                    '<span class="route-kind"><i data-lucide="'+option.icon+'"></i>'+option.type+'</span>' +
+                    '<b>'+option.name+'</b><span class="route-subtitle">'+visual.subtitle+'</span><p>'+option.description+'</p>' +
+                    '<span class="route-reward"><i data-lucide="gift"></i>'+option.reward+'</span>' +
+                    '<span class="route-voters">'+(winner?'<strong>✓ Route gekozen</strong> · ':selected?'<strong>Jouw stem</strong> · ':'')+escapeHTML(names.join(', ')||'Nog geen stemmen')+'</span>' +
+                    '</button>';
             }).join('')+'</div>';
             if(route.summary)html+='<p class="route-result" role="status">'+escapeHTML(route.summary)+'</p>';
             if(route.status==='event'||route.answers[me]){
@@ -2107,8 +2405,9 @@ class SquadEngine{
         const roleColor=key=>({macrofaag:'#22d3ee',enzym:'#c084fc',ribosoom:'#34d399',chromosoom:'#fbbf24'}[key]||'#94a3b8');
         function renderRestScene(prefix,s){
             const surface=document.getElementById(prefix+'-rest-scene');if(!surface)return;
-            ensureSpriteTemplates();const me=isSquadMode?myUserId:'solo',members=Object.values(s.members);
-            surface.innerHTML='<div class="rest-scene-heading"><h3>'+ (s.restId?'Long rest · samen herstellen':'Jouw party')+'</h3><span>'+members.filter(m=>m.isReady).length+' / '+members.length+' gereed</span></div><div class="rest-gathering"><div class="rest-source"><div class="actor-sprite" style="--actor-color:#fbbf24">'+spriteTemplate+'</div><b>ATP-bron</b></div>'+members.map(m=>'<div class="rest-character" style="--actor-color:'+roleColor(m.classKey)+'"><div class="rest-character-head"><div class="actor-sprite">'+(m.classKey?spriteTemplate:'<span class="avatar-initial">'+escapeHTML(m.name.slice(0,1))+'</span>')+'</div><div><b>'+escapeHTML(m.name)+(m.id===me?' · Jij':'')+'</b><span>'+escapeHTML(HERO_CLASSES[m.classKey]?.role||'Kies een klasse')+' · Lv. '+m.level+'</span></div></div>'+resourceBarHTML(m.hp,m.maxHp,'hp')+resourceBarHTML(m.atp,m.maxAtp,'atp')+'<small class="'+(m.isReady?'ready-label':'')+'">'+(m.isReady?'Gereed ✓':m.classKey?'Nog niet gereed':'Kies je klasse')+'</small></div>').join('')+'</div>';
+            const me=isSquadMode?myUserId:'solo',members=Object.values(s.members);
+            const sourceSVG='<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="36" fill="none" stroke="#fbbf24" stroke-width="4" stroke-dasharray="7 5"/><circle cx="50" cy="50" r="24" fill="#fbbf24" fill-opacity=".2" stroke="#fde68a" stroke-width="3"/><path d="M50 27 L57 45 L76 50 L57 57 L50 76 L43 57 L24 50 L43 45Z" fill="#fbbf24"/></svg>';
+            surface.innerHTML='<div class="rest-scene-heading"><h3>'+ (s.restId?'Long rest · samen herstellen':'Jouw party')+'</h3><span>'+members.filter(m=>m.isReady).length+' / '+members.length+' gereed</span></div><div class="rest-gathering"><div class="rest-source"><div class="actor-sprite">'+sourceSVG+'</div><b>ATP-bron</b></div>'+members.map(m=>'<div class="rest-character" style="--actor-color:'+roleColor(m.classKey)+'"><div class="rest-character-head"><div class="actor-sprite">'+(m.classKey?heroSpriteSVG(m.classKey,'rest-'+m.id):'<span class="avatar-initial">'+escapeHTML(m.name.slice(0,1))+'</span>')+'</div><div><b>'+escapeHTML(m.name)+(m.id===me?' · Jij':'')+'</b><span>'+escapeHTML(HERO_CLASSES[m.classKey]?.role||'Kies een klasse')+' · Lv. '+m.level+'</span></div></div>'+resourceBarHTML(m.hp,m.maxHp,'hp')+resourceBarHTML(m.atp,m.maxAtp,'atp')+'<small class="'+(m.isReady?'ready-label':'')+'">'+(m.isReady?'Gereed ✓':m.classKey?'Nog niet gereed':'Kies een klasse')+'</small></div>').join('')+'</div>';
         }
         function setupCampaignBattleUI(s){
             showScreen('battle');gameState.currentLevel=s.battle.level;ensureSpriteTemplates();
@@ -2131,11 +2430,16 @@ class SquadEngine{
         function actorCard(s,actor,side){
             const b=s.battle,me=isSquadMode?myUserId:'solo',enemy=side==='enemy',selected=enemy?actor.id===selectedEnemyId:actor.id===selectedAllyId;
             const color=enemy?['#fb7185','#fb923c','#f472b6'][actor.kind||0]:roleColor(actor.classKey),active=b.activeActorId===actor.id&&s.status==='battle';
-            return '<button id="actor-'+actor.id+'" type="button" onclick="'+(enemy?'selectEnemyTarget':'selectAllyTarget')+'(\''+actor.id+'\')" '+(enemy&&actor.hp<=0?'disabled':'')+' aria-pressed="'+selected+'" aria-label="'+(enemy?'Vijand':'Teamgenoot')+' '+escapeHTML(actor.name)+' kiezen" class="field-actor '+(enemy?'enemy-actor':'player-actor')+' '+(selected?'actor-selected':'')+' '+(active?'actor-current':'')+' '+(!actor.hp?'actor-fallen':'')+'" style="--actor-color:'+color+'">'+(!enemy&&actor.id===me?'<span class="self-label">Jij</span>':'')+'<b class="actor-name">'+escapeHTML(actor.name)+'</b><span class="actor-role">'+(enemy?(actor.isBoss?'BOSS':'Vijand'):escapeHTML(HERO_CLASSES[actor.classKey]?.role||'Teamgenoot')+' · Lv. '+actor.level)+'</span><div class="actor-sprite">'+(enemy?enemySpriteTemplate:spriteTemplate)+'</div><div class="actor-hp-track"><span style="width:'+Math.round(actor.hp/actor.maxHp*100)+'%"></span></div><span class="actor-resources">'+actor.hp+' / '+actor.maxHp+' HP</span>'+(!enemy?'<div class="actor-atp-track"><span style="width:'+Math.round(actor.atp/actor.maxAtp*100)+'%"></span></div><span class="actor-atp-label">ATP · mana '+actor.atp+' / '+actor.maxAtp+'</span>':'')+(!enemy&&(actor.shield||actor.focused)?'<span class="actor-buff">'+(actor.shield?'Schild ':'')+(actor.focused?'Focus':'')+'</span>':'')+'<span class="actor-turn-label">'+(active?'Aan de beurt':!actor.hp?enemy?'Verslagen':'Neergegaan · healing mogelijk':selected?enemy?'Doelwit':'Healing-doelwit':'')+'</span></button>';
+            const artwork=enemy?enemySpriteSVG(actor,'battle-'+actor.id):heroSpriteSVG(actor.classKey,'battle-'+actor.id);
+            return '<button id="actor-'+actor.id+'" type="button" onclick="'+(enemy?'selectEnemyTarget':'selectAllyTarget')+'(\''+actor.id+'\')" '+(enemy&&actor.hp<=0?'disabled':'')+' aria-pressed="'+selected+'" aria-label="'+(enemy?'Vijand':'Teamgenoot')+' '+escapeHTML(actor.name)+' kiezen" class="field-actor '+(enemy?'enemy-actor':'player-actor')+' '+(selected?'actor-selected':'')+' '+(active?'actor-current':'')+' '+(!actor.hp?'actor-fallen':'')+'" style="--actor-color:'+color+'">'+(!enemy&&actor.id===me?'<span class="self-label">Jij</span>':'')+'<b class="actor-name">'+escapeHTML(actor.name)+'</b><span class="actor-role">'+(enemy?(actor.isBoss?'BOSS':'Vijand'):escapeHTML(HERO_CLASSES[actor.classKey]?.role||'Teamgenoot')+' · Lv. '+actor.level)+'</span><div class="actor-sprite">'+artwork+'</div><div class="actor-hp-track"><span style="width:'+Math.round(actor.hp/actor.maxHp*100)+'%"></span></div><span class="actor-resources">'+actor.hp+' / '+actor.maxHp+' HP</span>'+(!enemy?'<div class="actor-atp-track"><span style="width:'+Math.round(actor.atp/actor.maxAtp*100)+'%"></span></div><span class="actor-atp-label">ATP · mana '+actor.atp+' / '+actor.maxAtp+'</span>':'')+(!enemy&&(actor.shield||actor.focused)?'<span class="actor-buff">'+(actor.shield?'Schild ':'')+(actor.focused?'Focus':'')+'</span>':'')+'<span class="actor-turn-label">'+(active?'Aan de beurt':!actor.hp?enemy?'Verslagen':'Neergegaan · healing mogelijk':selected?enemy?'Doelwit':'Healing-doelwit':'')+'</span></button>';
         }
         function renderBattleField(s){
-            const b=s.battle;
+            const b=s.battle,arena=document.getElementById('battle-arena-card');
             document.getElementById('field-region').textContent=b.region+' · '+b.title+(b.routeName?' · '+b.routeName:'');
+            if(arena){
+                arena.dataset.region=String(b.level||1);
+                [1,2,3,4].forEach(level=>arena.classList.toggle('biome-'+level,level===(b.level||1)));
+            }
             document.getElementById('battle-targets').innerHTML=b.enemies.map(enemy=>actorCard(s,enemy,'enemy')).join('');
             document.getElementById('field-party').innerHTML=Object.values(s.members).map(member=>actorCard(s,member,'player')).join('');
             document.getElementById('battle-target-description').textContent='Aanval: '+(b.enemies.find(e=>e.id===selectedEnemyId)?.name||'alle vijanden verslagen')+' · Healing: '+actorLabel(selectedAllyId);
@@ -2149,28 +2453,98 @@ class SquadEngine{
             if(observedBattleId!==b.id){clearTimeout(eventTimer);eventTimer=null;animationQueue=[];animationBusy=false;observedBattleId=b.id;lastEventSeq=Math.max(0,b.eventSeq-1);}
             const fresh=b.events.filter(event=>event.seq>lastEventSeq);if(fresh.length){lastEventSeq=b.eventSeq;animationQueue.push(...fresh);}
         }
+        function createBattleVFX(event, actor, affected) {
+            const arena=document.getElementById('battle-arena-card');
+            if(!arena)return null;
+            const move=event.moveId||event.kind||'attack';
+            const config={
+                fagocytose:{color:'#22d3ee',type:'claw',size:118},
+                lysosoom_bom:{color:'#86efac',type:'burst',size:210},
+                membraan_bastion:{color:'#67e8f9',type:'shield',size:190},
+                immuun_charge:{color:'#38bdf8',type:'charge',size:205},
+                katalyse:{color:'#c084fc',type:'arc',size:145},
+                enzym_golf:{color:'#a78bfa',type:'wave',size:245},
+                substraat_overdrive:{color:'#f0abfc',type:'beam',size:210},
+                kettingreactie:{color:'#e879f9',type:'storm',size:270},
+                eiwit_synthese:{color:'#34d399',type:'heal',size:175},
+                herstel_golf:{color:'#6ee7b7',type:'wave',size:250},
+                atp_boost:{color:'#38bdf8',type:'energy',size:155},
+                levenskern:{color:'#a3e635',type:'nova',size:275},
+                crossing_over:{color:'#fbbf24',type:'slash',size:155},
+                dna_focus:{color:'#fde68a',type:'orbit',size:160},
+                reductiedeling:{color:'#f59e0b',type:'nova',size:250},
+                replicatie_combo:{color:'#facc15',type:'combo',size:235},
+                attack:{color:event.side==='enemy'?'#fb7185':'#67e8f9',type:'slash',size:125},
+                aoe:{color:'#c084fc',type:'wave',size:230},
+                heal:{color:'#34d399',type:'heal',size:170},
+                energy:{color:'#38bdf8',type:'energy',size:160},
+                defend:{color:'#67e8f9',type:'shield',size:180},
+                miss:{color:'#94a3b8',type:'mist',size:110},
+                item:{color:'#fbbf24',type:'nova',size:140},
+                level:{color:'#fbbf24',type:'nova',size:220}
+            };
+            const style=config[move]||config[event.kind]||config.attack;
+            let x=0,y=0;
+            if(event.kind==='aoe'||event.targets.length>1){
+                const box=arena.getBoundingClientRect();x=box.width/2;y=box.height/2;
+            }else{
+                const target=affected[0]?.card;
+                const source=actor;
+                const box=arena.getBoundingClientRect();
+                const a=source?.getBoundingClientRect(),b=target?.getBoundingClientRect();
+                if(a&&b){x=((a.left+a.width/2)+(b.left+b.width/2))/2-box.left;y=((a.top+a.height/2)+(b.top+b.height/2))/2-box.top;}
+                else if(a){x=a.left+a.width/2-box.left;y=a.top+a.height/2-box.top;}
+                else{x=box.width/2;y=box.height/2;}
+            }
+            const fx=document.createElement('div');
+            fx.className='battle-vfx vfx-'+style.type+' move-vfx-'+spriteSafeId(move);
+            fx.setAttribute('aria-hidden','true');
+            fx.style.left=x+'px';fx.style.top=y+'px';
+            fx.style.setProperty('--vfx-color',style.color);
+            fx.style.setProperty('--vfx-size',style.size+'px');
+            fx.innerHTML='<span class="vfx-ring vfx-ring-one"></span><span class="vfx-ring vfx-ring-two"></span><span class="vfx-core"></span>'+Array.from({length:9},(_,i)=>'<span class="vfx-particle" style="--particle-angle:'+(i*40)+'deg;--particle-delay:'+(i%3)*35+'ms"></span>').join('');
+            arena.appendChild(fx);
+            return fx;
+        }
+
         function playNextBattleEvent(){
             if(animationBusy||!animationQueue.length)return;
             const event=animationQueue.shift();animationBusy=true;enableBattleActions(false);
             const banner=document.getElementById('battle-action-banner');banner.textContent=actorLabel(event.actorId)+' · '+event.label;banner.className='battle-action-banner event-'+event.kind;
             const actor=document.getElementById('actor-'+event.actorId),affected=[];
-            const casting=event.kind==='aoe'||(event.moveId&&['enzym','ribosoom'].includes(activeCampaign()?.members[event.actorId]?.classKey));
+            const casting=event.kind==='aoe'||Boolean(event.moveId);
+            const actorClass=activeCampaign()?.members[event.actorId]?.classKey;
+            const moveClass=event.moveId?'move-cast-'+spriteSafeId(event.moveId):'';
             const actingClass=(event.kind==='attack'||event.kind==='aoe')&&!casting?(event.side==='player'?'actor-attacking':'enemy-attacking'):event.kind==='miss'?'actor-miss':'actor-casting';
-            actor?.classList.add(actingClass);combatSound(event.kind);if(event.kind==='aoe')document.getElementById('battle-arena-card').classList.add('arena-aoe');
+            actor?.classList.add(actingClass);
+            if(moveClass)actor?.classList.add(moveClass);
+            if(actorClass)actor?.classList.add('class-cast-'+actorClass);
+            combatSound(event.kind);
+            if(event.kind==='aoe')document.getElementById('battle-arena-card').classList.add('arena-aoe');
             for(const target of event.targets){
                 const card=document.getElementById('actor-'+target.id);if(!card)continue;
-                const restore=event.kind==='heal'||event.kind==='energy',effect=restore||event.kind==='defend'?'actor-healing':'actor-hit';card.classList.add(effect);
+                const restore=event.kind==='heal'||event.kind==='energy',effect=restore||event.kind==='defend'?'actor-healing':'actor-hit';
+                card.classList.add(effect);
+                if(event.moveId)card.classList.add('move-hit-'+spriteSafeId(event.moveId));
                 if(target.resource==='hp'&&target.before>0&&target.after===0)card.classList.remove('actor-fallen');
                 const s=activeCampaign(),targetState=target.side==='player'?s.members[target.id]:s.battle.enemies.find(e=>e.id===target.id),max=target.resource==='atp'?targetState?.maxAtp:targetState?.maxHp,track=card.querySelector(target.resource==='atp'?'.actor-atp-track > span':'.actor-hp-track > span');
                 if(max&&track){track.style.transition='none';track.style.width=(target.before/max*100)+'%';track.getBoundingClientRect?.();requestAnimationFrame(()=>{track.style.transition='width .5s .2s ease';track.style.width=(target.after/max*100)+'%';});}
-                const floating=document.createElement('span');floating.className='floating-number '+(restore?'floating-heal':'');floating.textContent=event.kind==='defend'?'Schild':(restore?'+':'−')+target.amount+(target.resource==='atp'?' ATP':'');card.appendChild(floating);affected.push({card,effect,floating,trail:showCombatTrail(actor,card,event.kind)});
+                const floating=document.createElement('span');floating.className='floating-number '+(restore?'floating-heal':'');floating.textContent=event.kind==='defend'?'Schild':(restore?'+':'−')+target.amount+(target.resource==='atp'?' ATP':'');card.appendChild(floating);
+                affected.push({card,effect,floating,trail:showCombatTrail(actor,card,event.kind)});
             }
+            const vfx=createBattleVFX(event,actor,affected);
+            const duration=event.moveId?1200:event.kind==='level'?950:900;
             eventTimer=setTimeout(()=>{
-                actor?.classList.remove(actingClass);for(const target of affected){target.card.classList.remove(target.effect);target.floating.remove();target.trail?.remove();}
-                document.getElementById('battle-arena-card').classList.remove('arena-aoe');animationBusy=false;eventTimer=null;
+                actor?.classList.remove(actingClass);
+                if(moveClass)actor?.classList.remove(moveClass);
+                if(actorClass)actor?.classList.remove('class-cast-'+actorClass);
+                for(const target of affected){target.card.classList.remove(target.effect);if(event.moveId)target.card.classList.remove('move-hit-'+spriteSafeId(event.moveId));target.floating.remove();target.trail?.remove();}
+                vfx?.remove();
+                document.getElementById('battle-arena-card').classList.remove('arena-aoe');
+                animationBusy=false;eventTimer=null;
                 const s=activeCampaign();if(s?.battle?.id!==observedBattleId){animationQueue=[];return;}
                 if(animationQueue.length)playNextBattleEvent();else renderCampaignBattle(s);
-            },event.kind==='level'?500:850);
+            },duration);
         }
         function renderCampaignBattle(s){
             const b=s.battle;if(!b)return;
@@ -2354,6 +2728,130 @@ class SquadEngine{
             }
         }
 
+        function spriteSafeId(value) {
+            return String(value || 'sprite').replace(/[^a-zA-Z0-9_-]/g, '-').slice(0, 48);
+        }
+
+        function heroSpriteSVG(classKey, seed = 'hero') {
+            const id = spriteSafeId(seed + '-' + classKey);
+            const palette = {
+                macrofaag: { a:'#22d3ee', b:'#0e7490', c:'#a5f3fc' },
+                enzym: { a:'#c084fc', b:'#7c3aed', c:'#f5d0fe' },
+                ribosoom: { a:'#34d399', b:'#047857', c:'#bbf7d0' },
+                chromosoom: { a:'#fbbf24', b:'#b45309', c:'#fef3c7' }
+            }[classKey] || {a:'#67e8f9',b:'#0e7490',c:'#cffafe'};
+            const defs = '<defs>' +
+                '<radialGradient id="' + id + '-body" cx="35%" cy="28%" r="75%"><stop offset="0" stop-color="' + palette.c + '"/><stop offset=".48" stop-color="' + palette.a + '"/><stop offset="1" stop-color="' + palette.b + '"/></radialGradient>' +
+                '<radialGradient id="' + id + '-core"><stop offset="0" stop-color="#fff"/><stop offset=".28" stop-color="' + palette.c + '"/><stop offset="1" stop-color="' + palette.a + '" stop-opacity=".1"/></radialGradient>' +
+                '<filter id="' + id + '-glow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="3.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>' +
+                '</defs>';
+            let body = '';
+            if (classKey === 'macrofaag') {
+                body = '<path d="M59 13 C72 11 75 23 89 25 C84 37 98 43 91 55 C102 68 86 75 81 84 C70 81 63 101 49 91 C37 101 29 88 21 83 C23 70 7 66 15 53 C5 42 19 34 25 26 C38 29 43 10 59 13Z" fill="url(#' + id + '-body)" stroke="' + palette.c + '" stroke-width="3" filter="url(#' + id + '-glow)"/>' +
+                    '<path d="M28 37 Q42 23 57 31 T83 39 M20 62 Q39 76 58 65 T84 62" fill="none" stroke="#e0fbff" stroke-opacity=".55" stroke-width="2"/>' +
+                    '<circle cx="58" cy="53" r="18" fill="url(#' + id + '-core)" stroke="#e0fbff" stroke-opacity=".8" stroke-width="2"/>' +
+                    '<circle cx="52" cy="49" r="3" fill="#fff"/><circle cx="65" cy="58" r="4" fill="' + palette.b + '"/>' +
+                    '<path d="M37 45 Q42 40 47 45 M69 43 Q75 38 79 44" fill="none" stroke="#083344" stroke-width="3" stroke-linecap="round"/>' +
+                    '<circle cx="39" cy="58" r="3" fill="#fff" opacity=".85"/><circle cx="77" cy="70" r="3" fill="#fff" opacity=".7"/>';
+            } else if (classKey === 'enzym') {
+                body = '<ellipse cx="60" cy="59" rx="39" ry="17" fill="none" stroke="' + palette.a + '" stroke-width="2" stroke-dasharray="4 5" opacity=".7" transform="rotate(-25 60 59)"/>' +
+                    '<ellipse cx="60" cy="59" rx="44" ry="22" fill="none" stroke="' + palette.c + '" stroke-width="1.5" opacity=".65" transform="rotate(50 60 59)"/>' +
+                    '<path d="M60 12 L84 43 L73 88 L40 94 L20 57 L36 20Z" fill="url(#' + id + '-body)" stroke="' + palette.c + '" stroke-width="3" filter="url(#' + id + '-glow)"/>' +
+                    '<path d="M60 12 L60 58 L20 57 M60 58 L84 43 M60 58 L73 88 M60 58 L36 20" stroke="#fff" stroke-opacity=".65" stroke-width="2" fill="none"/>' +
+                    '<circle cx="60" cy="58" r="14" fill="url(#' + id + '-core)"/>' +
+                    '<path d="M52 57 Q60 46 68 57 Q60 68 52 57Z" fill="#fff" opacity=".95"/>' +
+                    '<circle cx="23" cy="25" r="4" fill="' + palette.c + '"/><circle cx="91" cy="72" r="3" fill="#fff"/><circle cx="40" cy="99" r="2.5" fill="' + palette.a + '"/>';
+            } else if (classKey === 'ribosoom') {
+                body = '<path d="M19 60 C20 39 39 27 61 30 C80 31 94 46 90 62 C87 77 71 83 55 80 C36 91 18 79 19 60Z" fill="url(#' + id + '-body)" stroke="' + palette.c + '" stroke-width="3" filter="url(#' + id + '-glow)"/>' +
+                    '<path d="M28 43 C31 24 52 16 69 22 C84 27 87 42 77 51 C66 61 42 60 28 43Z" fill="' + palette.c + '" fill-opacity=".82" stroke="#ecfdf5" stroke-width="2"/>' +
+                    '<path d="M24 62 C36 52 48 58 55 67 C64 79 82 72 87 61" fill="none" stroke="' + palette.b + '" stroke-width="4" stroke-linecap="round"/>' +
+                    '<circle cx="47" cy="39" r="5" fill="#fff" opacity=".9"/><circle cx="67" cy="38" r="3" fill="' + palette.b + '"/>' +
+                    '<circle cx="39" cy="70" r="3" fill="#fff"/><circle cx="72" cy="69" r="4" fill="' + palette.c + '"/>' +
+                    '<path d="M13 31 Q8 22 18 18 M96 39 Q106 29 100 21 M20 91 Q11 98 5 89" fill="none" stroke="' + palette.a + '" stroke-width="2" stroke-linecap="round"/>';
+            } else {
+                body = '<path d="M34 12 C82 24 32 42 79 55 C34 68 83 84 36 101 M83 12 C34 24 84 42 37 55 C82 68 33 84 80 101" fill="none" stroke="url(#' + id + '-body)" stroke-width="10" stroke-linecap="round" filter="url(#' + id + '-glow)"/>' +
+                    '<path d="M34 12 C82 24 32 42 79 55 C34 68 83 84 36 101 M83 12 C34 24 84 42 37 55 C82 68 33 84 80 101" fill="none" stroke="' + palette.c + '" stroke-width="2.2" stroke-linecap="round"/>' +
+                    '<g stroke="#fff5d6" stroke-width="3" stroke-linecap="round"><path d="M41 20 L75 20 M47 35 L69 35 M42 50 L75 50 M48 66 L69 66 M41 82 L76 82 M47 96 L70 96"/></g>' +
+                    '<circle cx="58" cy="55" r="8" fill="url(#' + id + '-core)" stroke="#fff" stroke-width="2"/>' +
+                    '<path d="M58 4 V13 M58 107 V116" stroke="' + palette.c + '" stroke-width="3" stroke-linecap="round"/>';
+            }
+            return '<svg viewBox="0 0 120 120" role="img" aria-label="' + (classKey || 'Cel') + ' karakter" xmlns="http://www.w3.org/2000/svg">' +
+                defs +
+                '<circle cx="60" cy="60" r="49" fill="none" stroke="' + palette.a + '" stroke-width="1.5" opacity=".22"/>' +
+                '<circle cx="60" cy="60" r="54" fill="none" stroke="' + palette.c + '" stroke-width="1" stroke-dasharray="2 8" opacity=".45"/>' +
+                '<g>' + body + '</g>' +
+                '<g fill="' + palette.c + '"><circle cx="15" cy="18" r="2"/><circle cx="100" cy="17" r="2.5"/><circle cx="103" cy="91" r="2"/><circle cx="17" cy="91" r="2.5"/></g>' +
+                '</svg>';
+        }
+
+        function enemySpriteSVG(enemy, seed = 'enemy') {
+            const level = Math.max(1, Math.min(4, Number(enemy?.spriteLevel || enemy?.level || 1)));
+            const kind = Math.max(0, Math.min(2, Number(enemy?.kind || 0)));
+            const boss = Boolean(enemy?.isBoss);
+            const id = spriteSafeId(seed + '-enemy-' + level + '-' + kind + (boss ? '-boss' : ''));
+            const colors = [
+                {a:'#fb7185',b:'#9f1239',c:'#fecdd3'},
+                {a:'#fb923c',b:'#9a3412',c:'#ffedd5'},
+                {a:'#c084fc',b:'#581c87',c:'#e9d5ff'},
+                {a:'#f43f5e',b:'#4c0519',c:'#ffe4e6'}
+            ];
+            const p = colors[level-1], spin = kind === 1 ? -12 : kind === 2 ? 14 : 0;
+            let creature = '';
+            if (level === 1) {
+                creature = '<path d="M60 17 C79 13 90 29 87 43 C101 59 84 83 65 86 C47 101 22 84 24 66 C8 51 23 26 43 29Z" fill="url(#' + id + '-body)" stroke="' + p.c + '" stroke-width="3"/>' +
+                    '<path d="M34 40 Q45 32 53 44 M66 43 Q76 34 84 43" fill="none" stroke="' + p.b + '" stroke-width="5" stroke-linecap="round"/>' +
+                    '<ellipse cx="60" cy="57" rx="20" ry="16" fill="#fff" fill-opacity=".25" stroke="' + p.c + '" stroke-width="2"/>' +
+                    '<circle cx="51" cy="56" r="4" fill="#fff"/><circle cx="69" cy="56" r="4" fill="#fff"/>' +
+                    '<path d="M51 66 Q60 72 69 66" fill="none" stroke="' + p.b + '" stroke-width="3" stroke-linecap="round"/>';
+            } else if (level === 2) {
+                creature = '<g stroke="' + p.c + '" stroke-width="3" stroke-linejoin="round"><path d="M60 10 L70 27 L91 20 L86 42 L108 55 L87 67 L94 91 L70 83 L58 108 L47 84 L22 94 L31 69 L9 56 L31 43 L24 21 L48 29Z" fill="url(#' + id + '-body)"/></g>' +
+                    '<circle cx="60" cy="57" r="23" fill="' + p.b + '" stroke="' + p.c + '" stroke-width="3"/>' +
+                    '<circle cx="60" cy="57" r="12" fill="#fff" fill-opacity=".2"/>' +
+                    '<path d="M45 52 L54 48 L60 56 L68 48 L76 54 M49 67 Q60 74 72 66" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>';
+            } else if (level === 3) {
+                creature = '<circle cx="60" cy="59" r="36" fill="none" stroke="' + p.a + '" stroke-width="5" stroke-dasharray="14 7" transform="rotate(' + spin + ' 60 59)"/>' +
+                    '<path d="M60 12 L78 38 L105 50 L77 69 L60 105 L42 73 L15 54 L43 39Z" fill="url(#' + id + '-body)" stroke="' + p.c + '" stroke-width="3"/>' +
+                    '<circle cx="60" cy="57" r="17" fill="' + p.b + '" stroke="#fff" stroke-width="2"/>' +
+                    '<path d="M51 55 L60 43 L69 55 L60 69Z" fill="' + p.c + '"/>' +
+                    '<path d="M17 26 L30 37 M91 82 L104 93" stroke="' + p.c + '" stroke-width="4" stroke-linecap="round"/>';
+            } else {
+                creature = '<path d="M31 13 C90 23 27 44 88 57 C30 72 91 90 31 106 M89 13 C27 23 91 44 32 57 C89 72 28 90 89 106" fill="none" stroke="' + p.a + '" stroke-width="9" stroke-linecap="round"/>' +
+                    '<path d="M31 13 C90 23 27 44 88 57 C30 72 91 90 31 106 M89 13 C27 23 91 44 32 57 C89 72 28 90 89 106" fill="none" stroke="' + p.c + '" stroke-width="2.5" stroke-linecap="round"/>' +
+                    '<path d="M38 22 L81 22 M45 39 L74 39 M40 56 L82 56 M46 73 L75 73 M38 91 L82 91" stroke="#fff" stroke-width="3"/>' +
+                    '<circle cx="60" cy="57" r="13" fill="' + p.b + '" stroke="' + p.c + '" stroke-width="3"/>';
+            }
+            const crown = boss ? '<path d="M25 25 L17 4 L43 17 L60 0 L77 17 L103 4 L95 28" fill="' + p.a + '" stroke="#fff" stroke-width="2" stroke-linejoin="round"/>' : '';
+            return '<svg viewBox="0 0 120 120" role="img" aria-label="' + (boss ? 'Boss' : 'Vijand') + ' sprite" xmlns="http://www.w3.org/2000/svg">' +
+                '<defs><radialGradient id="' + id + '-body" cx="35%" cy="25%" r="75%"><stop offset="0" stop-color="' + p.c + '"/><stop offset=".45" stop-color="' + p.a + '"/><stop offset="1" stop-color="' + p.b + '"/></radialGradient><filter id="' + id + '-glow" x="-70%" y="-70%" width="240%" height="240%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>' +
+                '<circle cx="60" cy="61" r="' + (boss ? 49 : 43) + '" fill="none" stroke="' + p.a + '" stroke-width="' + (boss ? 4 : 2) + '" stroke-dasharray="' + (boss ? '7 5' : '3 8') + '" opacity=".8"/>' +
+                '<g filter="url(#' + id + '-glow)">' + crown + creature + '</g>' +
+                (boss ? '<circle cx="60" cy="60" r="55" fill="none" stroke="' + p.c + '" stroke-width="2" opacity=".65"/>' : '') +
+                '<g fill="' + p.c + '"><circle cx="13" cy="88" r="3"/><circle cx="103" cy="31" r="2.5"/><circle cx="96" cy="101" r="2"/></g>' +
+                '</svg>';
+        }
+
+        function regionScenerySVG(level) {
+            const scenes = {
+                1: '<circle cx="60" cy="60" r="38" fill="none" stroke="#22d3ee" stroke-width="3"/><circle cx="60" cy="60" r="15" fill="#22d3ee" opacity=".35"/><path d="M8 74 Q30 45 51 72 T112 58" fill="none" stroke="#67e8f9" stroke-width="3"/>',
+                2: '<path d="M8 84 Q25 25 43 72 T81 34 T112 69" fill="none" stroke="#a78bfa" stroke-width="6" stroke-linecap="round"/><circle cx="27" cy="40" r="8" fill="#c4b5fd"/><circle cx="87" cy="28" r="6" fill="#e9d5ff"/>',
+                3: '<circle cx="60" cy="60" r="41" fill="none" stroke="#fb923c" stroke-width="4" stroke-dasharray="8 5"/><circle cx="60" cy="60" r="25" fill="#f97316" opacity=".25"/><path d="M60 8 L71 45 L103 60 L70 72 L60 111 L48 73 L16 60 L48 47Z" fill="#fb923c" opacity=".45"/>',
+                4: '<path d="M34 8 C87 25 28 45 86 60 C28 76 88 94 34 112 M86 8 C28 25 88 45 30 60 C88 76 28 94 86 112" fill="none" stroke="#f472b6" stroke-width="5"/><path d="M40 20 L80 20 M46 40 L74 40 M40 60 L80 60 M46 80 L74 80 M40 100 L80 100" stroke="#fbcfe8" stroke-width="3"/>'
+            };
+            return '<svg viewBox="0 0 120 120" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">' + (scenes[level] || scenes[1]) + '</svg>';
+        }
+
+        function enhanceClassCards() {
+            ['macrofaag','enzym','ribosoom','chromosoom'].forEach(key => {
+                const card = document.getElementById('card-class-' + key);
+                if (!card || card.querySelector('.class-art-preview')) return;
+                const art = document.createElement('div');
+                art.className = 'class-art-preview';
+                art.innerHTML = heroSpriteSVG(key, 'class-preview-' + key);
+                const content = card.firstElementChild;
+                if (content) card.insertBefore(art, content);
+            });
+        }
+
         /* NAVIGATION & SPRITES */
         window.showScreen = function(screenId) {
             if (!isSquadMode && screenId !== 'battle' && !document.getElementById('screen-battle').classList.contains('hidden')) resetBattleInteraction();
@@ -2380,26 +2878,13 @@ class SquadEngine{
         function renderHeroSprite() {
             const wrapper = document.getElementById('hero-svg-wrapper');
             const classObj = HERO_CLASSES[gameState.selectedClass];
-
             document.getElementById('hero-battle-name').innerText = classObj.name;
-
-            wrapper.innerHTML = `
-                <svg viewBox="0 0 100 100" class="w-full h-full text-${classObj.color}-400 drop-shadow-[0_0_15px_rgba(6,182,212,0.5)]">
-                    <circle cx="50" cy="50" r="40" fill="currentColor" fill-opacity="0.2" stroke="currentColor" stroke-width="4"/>
-                    <circle cx="50" cy="50" r="18" fill="currentColor" fill-opacity="0.6"/>
-                    <path d="M30 40 Q50 20 70 40 Q50 60 30 40" fill="none" stroke="white" stroke-width="3"/>
-                </svg>
-            `;
+            wrapper.innerHTML = heroSpriteSVG(gameState.selectedClass, 'battle-preview');
         }
 
-        function renderEnemySprite(level) {
+        function renderEnemySprite(level, enemy = null) {
             const wrapper = document.getElementById('enemy-svg-wrapper');
-            wrapper.innerHTML = `
-                <svg viewBox="0 0 100 100" class="w-full h-full text-rose-500 drop-shadow-[0_0_15px_rgba(244,63,94,0.5)]">
-                    <polygon points="50,10 90,50 50,90 10,50" fill="currentColor" fill-opacity="0.3" stroke="currentColor" stroke-width="4"/>
-                    <circle cx="50" cy="50" r="12" fill="white"/>
-                </svg>
-            `;
+            wrapper.innerHTML = enemySpriteSVG(enemy || {spriteLevel:level,kind:(level-1)%3,isBoss:true}, 'enemy-preview');
         }
 
         window.switchCodexTab = function(tabKey) {
@@ -2548,6 +3033,7 @@ class SquadEngine{
             initializeMultiplayer(); registerGameTools();
             document.getElementById('input-squad-code').addEventListener('keydown',event => {if (event.key === 'Enter') joinExistingSquad();});
             applyGameSettings();
+            enhanceClassCards();
             document.addEventListener('keydown', event => {
                 if (event.key === 'Escape') closeSettings();
             });

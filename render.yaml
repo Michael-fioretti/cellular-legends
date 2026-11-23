@@ -3,6 +3,8 @@ services:
     name: cellular-legends
     runtime: node
     plan: free
+    branch: main
+    autoDeployTrigger: commit
     buildCommand: npm ci --ignore-scripts && npm test
     startCommand: npm start
     healthCheckPath: /api/health

@@ -233,6 +233,146 @@ button,input,select{font:inherit}button{touch-action:manipulation}button:focus-v
 </style>
 <meta name="description" content="Speel Cellular Legends samen. Genereer een invite link, kies je klasse en begin wanneer iedereen gereed is.">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%228%22%20fill%3D%22%230f172a%22%2F%3E%3Ccircle%20cx%3D%2216%22%20cy%3D%2216%22%20r%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%2322d3ee%22%20stroke-width%3D%222%22%2F%3E%3Ccircle%20cx%3D%2216%22%20cy%3D%2216%22%20r%3D%224%22%20fill%3D%22%238b5cf6%22%2F%3E%3C%2Fsvg%3E">
+
+<style id="cellular-legends-settings-styles">
+    .settings-theme-option {
+        display:flex;align-items:center;justify-content:center;gap:.65rem;
+        min-height:3.5rem;padding:.85rem;border:1px solid #334155;
+        border-radius:.85rem;background:#0f172a;color:#cbd5e1;
+        font-weight:700;transition:border-color .15s,background .15s,color .15s;
+    }
+    .settings-theme-option:hover { border-color:#06b6d4; }
+    .settings-theme-option.is-selected {
+        border-color:#06b6d4;background:rgba(8,145,178,.18);color:#67e8f9;
+        box-shadow:inset 0 0 0 1px rgba(6,182,212,.18);
+    }
+    .settings-row {
+        display:flex;align-items:center;justify-content:space-between;gap:1rem;
+        padding:.85rem 1rem;border:1px solid #334155;border-radius:.85rem;
+        background:rgba(15,23,42,.55);cursor:pointer;
+    }
+    .settings-row b { display:block;font-size:.9rem; }
+    .settings-row small { display:block;margin-top:.2rem;color:#94a3b8;font-size:.75rem;line-height:1.4; }
+    #settings-modal .glass-panel { overscroll-behavior:contain; }
+
+    html[data-theme="light"], html[data-theme="light"] body {
+        background-color:#f1f5f9!important;color:#0f172a!important;
+    }
+    html[data-theme="light"] header {
+        background:rgba(255,255,255,.96)!important;border-color:#cbd5e1!important;
+        color:#0f172a!important;box-shadow:0 2px 12px rgba(15,23,42,.06);
+    }
+    html[data-theme="light"] .glass-panel {
+        background:rgba(255,255,255,.97)!important;border-color:#cbd5e1!important;
+        color:#0f172a!important;box-shadow:0 18px 55px rgba(15,23,42,.12);
+    }
+    html[data-theme="light"] body :is(
+        [class~="bg-slate-950"],[class~="bg-slate-950/60"],
+        [class~="bg-slate-900"],[class~="bg-slate-900/95"],
+        [class~="bg-slate-900/90"],[class~="bg-slate-900/80"],
+        [class~="bg-slate-800"],[class~="bg-slate-800/80"],
+        [class~="bg-slate-700"]
+    ):not(.fixed) { background-color:#fff!important; }
+    html[data-theme="light"] body :is(
+        [class~="bg-slate-950/90"],[class~="bg-slate-950/60"]
+    ):not(.fixed) { background-color:#f1f5f9!important; }
+    html[data-theme="light"] body :is(
+        [class~="text-slate-100"],[class~="text-slate-200"],[class~="text-slate-950"]
+    ) { color:#0f172a!important; }
+    html[data-theme="light"] body [class~="text-slate-300"] { color:#334155!important; }
+    html[data-theme="light"] body [class~="text-slate-400"] { color:#475569!important; }
+    html[data-theme="light"] body [class~="text-slate-600"] { color:#64748b!important; }
+    html[data-theme="light"] body :is([class~="border-slate-700"],[class~="border-slate-800"]) {
+        border-color:#cbd5e1!important;
+    }
+
+    /* Custom game panels and cards that use hand-written dark colors. */
+    html[data-theme="light"] :is(
+        .menu-secondary,.menu-links button,.rest-campaign,.rest-party-panel,
+        .rest-workspace,.rest-character,.attribute-card,.recipe-card,
+        .route-option,.initiative-row,.battle-action-banner,.skill-choice,
+        .rest-move,.event-options button,.question-settings select,
+        .invite-copy input,.material-strip>span,.rest-footer
+    ) { background:#fff!important;color:#1e293b!important;border-color:#cbd5e1!important; }
+    html[data-theme="light"] :is(
+        .menu-title h2,.menu-title p,.rest-heading h2,.rest-heading-meta,
+        .rest-menu-button,.campaign-caption,.campaign-caption b,
+        .rest-scene-heading h3,.rest-character-head b,.rest-character-head span,
+        .rest-recovery>b,.rest-recovery p,.rest-recovery>span,
+        .vitals-identity b,.vitals-identity span,.resource-line b,
+        .vitals-stats,.vitals-stats b,.rest-vitals-empty,.rest-tabs button,
+        .panel-title h3,.panel-note,.attribute-card b,.attribute-card p,
+        .recipe-card h4,.recipe-card p,.route-option b,.route-option p,
+        .route-voters,.event-question>p,.event-options button,
+        .event-feedback p,.event-feedback span,.rest-empty,.rest-empty h3,
+        .rest-move b,.rest-move p,.question-settings label,
+        .question-settings p,.invite-panel label,.invite-panel p,
+        .battle-top h3,.battle-top p,.field-side-label
+    ) { color:#334155!important; }
+    html[data-theme="light"] :is(
+        .menu-links button,.menu-secondary,.rest-menu-button,.rest-tabs button,
+        .rest-footer .rest-class-button,.rest-footer .rest-leave,
+        .event-options button,.battle-actions button,.skill-choice,
+        .invite-copy button
+    ) { color:#334155!important; }
+    html[data-theme="light"] :is(
+        .menu-title h2,.rest-heading h2,.rest-character-head b,
+        .vitals-identity b,.panel-title h3,.attribute-card b,
+        .recipe-card h4,.route-option b,.rest-empty h3,.battle-top h3
+    ) { color:#0f172a!important; }
+    html[data-theme="light"] :is(
+        .rest-source,.rest-tabs button[aria-selected="true"],
+        .route-voted,.initiative-current,.self-label,
+        .equipped-slots>div,.rest-recovery button+button
+    ) { background:#e0f2fe!important;color:#075985!important; }
+    html[data-theme="light"] :is(
+        .rest-character,.attribute-card,.recipe-card,.route-option,
+        .initiative-row,.battle-action-banner,.skill-choice,.rest-move,
+        .event-options button,.question-settings select,.invite-copy input,
+        .rest-campaign,.rest-party-panel,.rest-workspace,.rest-footer
+    ) { border-color:#cbd5e1!important; }
+    html[data-theme="light"] :is(
+        .resource-track,.xp-track,.total-track,.field-actor .actor-hp-track,
+        .field-actor .actor-atp-track,.damage-track
+    ) { background:#e2e8f0!important; }
+    html[data-theme="light"] .field-actor { background:#f8fafc!important;border-color:#cbd5e1!important; }
+    html[data-theme="light"] .field-actor:enabled:hover { background:#e0f2fe!important; }
+    html[data-theme="light"] #battle-arena-card {
+        background:radial-gradient(ellipse at 30% 55%,#cffafe,transparent 55%),
+                   radial-gradient(ellipse at 80% 55%,#ffe4e6,transparent 50%),#f8fafc!important;
+        border-color:#cbd5e1!important;
+    }
+    html[data-theme="light"] .rest-footer button:not(.rest-start):not(.rest-leave) {
+        background:#e0f2fe!important;color:#075985!important;
+    }
+    html[data-theme="light"] .rest-footer .rest-leave { background:#fff1f2!important;color:#be123c!important; }
+    html[data-theme="light"] .menu-secondary span { color:#475569!important; }
+    html[data-theme="light"] .menu-primary,
+    html[data-theme="light"] .attribute-card button,
+    html[data-theme="light"] .invite-panel button,
+    html[data-theme="light"] .rest-footer .rest-start {
+        color:#fff!important;
+    }
+    html[data-theme="light"] .settings-theme-option {
+        background:#f8fafc!important;color:#334155!important;border-color:#cbd5e1!important;
+    }
+    html[data-theme="light"] .settings-theme-option.is-selected {
+        background:#ecfeff!important;color:#0e7490!important;border-color:#06b6d4!important;
+    }
+    html[data-theme="light"] .settings-row { background:#f8fafc!important;border-color:#cbd5e1!important; }
+    html[data-theme="light"] .settings-row small { color:#64748b!important; }
+    html[data-reduced-motion="true"] *,
+    html[data-reduced-motion="true"] *::before,
+    html[data-reduced-motion="true"] *::after {
+        animation-duration:.01ms!important;animation-iteration-count:1!important;
+        transition-duration:.01ms!important;scroll-behavior:auto!important;
+    }
+    @media(max-width:600px) {
+        #settings-modal { align-items:flex-end;padding:.65rem; }
+        #settings-modal .glass-panel { padding:1.1rem;max-height:92vh; }
+    }
+</style>
+
 </head>
 <body class="h-full flex flex-col bg-slate-950 text-slate-100 overflow-x-hidden">
 
@@ -259,6 +399,9 @@ button,input,select{font:inherit}button{touch-action:manipulation}button:focus-v
 
                 <button onclick="toggleAudio()" id="audio-btn" class="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 transition border border-slate-700" title="Geluid Aan/Uit">
                     <i data-lucide="volume-2" id="audio-icon" class="w-5 h-5 text-cyan-400"></i>
+                </button>
+                <button onclick="openSettings()" id="settings-btn" class="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 transition border border-slate-700" title="Instellingen" aria-label="Instellingen">
+                    <i data-lucide="settings" class="w-5 h-5"></i>
                 </button>
                 <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold">
                     <i data-lucide="zap" class="w-4 h-4 text-amber-400 fill-amber-400"></i>
@@ -630,6 +773,74 @@ button,input,select{font:inherit}button{touch-action:manipulation}button:focus-v
         </div>
     </div>
 
+    <!-- SETTINGS MODAL -->
+    <div id="settings-modal"
+         class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4"
+         role="dialog" aria-modal="true" aria-labelledby="settings-title"
+         onclick="if(event.target === this) closeSettings()">
+        <div class="glass-panel w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-3xl p-6 border border-slate-700 shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="settings-title" class="text-xl sm:text-2xl font-extrabold flex items-center gap-2">
+                    <i data-lucide="settings" class="w-6 h-6 text-cyan-400"></i>
+                    Instellingen
+                </h2>
+                <button onclick="closeSettings()" class="p-2 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-white" aria-label="Instellingen sluiten">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <section class="mb-6">
+                <h3 class="font-bold text-sm mb-3">Weergave</h3>
+                <div class="grid grid-cols-2 gap-3">
+                    <button type="button" id="theme-dark-btn" class="settings-theme-option" onclick="setGameTheme('dark')" aria-pressed="true">
+                        <i data-lucide="moon" class="w-5 h-5"></i>
+                        <span>Dark mode</span>
+                    </button>
+                    <button type="button" id="theme-light-btn" class="settings-theme-option" onclick="setGameTheme('light')" aria-pressed="false">
+                        <i data-lucide="sun" class="w-5 h-5"></i>
+                        <span>Light mode</span>
+                    </button>
+                </div>
+            </section>
+
+            <section class="mb-6">
+                <h3 class="font-bold text-sm mb-3">Geluid</h3>
+                <label for="settings-audio-enabled" class="settings-row">
+                    <span>
+                        <b>Geluidseffecten</b>
+                        <small>Gevechts- en andere gamegeluiden</small>
+                    </span>
+                    <input id="settings-audio-enabled" type="checkbox" class="w-5 h-5 accent-cyan-500" onchange="setAudioEnabled(this.checked)">
+                </label>
+
+                <div class="mt-5">
+                    <label for="settings-volume" class="flex justify-between gap-3 text-sm mb-2">
+                        <span class="font-semibold">Volume</span>
+                        <output id="settings-volume-value" for="settings-volume" class="font-bold text-cyan-400 tabular-nums">70%</output>
+                    </label>
+                    <input id="settings-volume" type="range" min="0" max="100" step="1" value="70"
+                           class="w-full accent-cyan-500" oninput="setGameVolume(this.value)">
+                    <div class="flex justify-between text-xs text-slate-400 mt-1"><span>0%</span><span>100%</span></div>
+                </div>
+            </section>
+
+            <section class="mb-6">
+                <h3 class="font-bold text-sm mb-3">Toegankelijkheid</h3>
+                <label for="settings-reduced-motion" class="settings-row">
+                    <span>
+                        <b>Minder animaties</b>
+                        <small>Vermindert bewegingen en overgangen</small>
+                    </span>
+                    <input id="settings-reduced-motion" type="checkbox" class="w-5 h-5 accent-cyan-500" onchange="setReducedMotion(this.checked)">
+                </label>
+            </section>
+
+            <button onclick="closeSettings()" class="w-full p-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold transition">
+                Klaar
+            </button>
+        </div>
+    </div>
+
     <!-- MODAL 4: IN-GAME CUSTOM TOAST NOTIFICATION -->
     <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none">
         <!-- Toast items inserted dynamically -->
@@ -647,6 +858,33 @@ button,input,select{font:inherit}button{touch-action:manipulation}button:focus-v
         const clone=value=>JSON.parse(JSON.stringify(value));
         const escapeHTML=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
         const refreshIcons=()=>window.lucide?.createIcons();
+        const SETTINGS_STORAGE_KEY = 'cellular-legends-settings-v1';
+
+        function loadGameSettings() {
+            const defaults = { theme: 'dark', volume: 70, audioEnabled: true, reducedMotion: false };
+            try {
+                const saved = JSON.parse(localStorage.getItem(SETTINGS_STORAGE_KEY) || '{}');
+                const volume = Number(saved?.volume);
+                return {
+                    theme: saved?.theme === 'light' ? 'light' : 'dark',
+                    volume: Number.isFinite(volume) ? Math.max(0, Math.min(100, volume)) : defaults.volume,
+                    audioEnabled: saved?.audioEnabled !== false,
+                    reducedMotion: saved?.reducedMotion === true
+                };
+            } catch {
+                return defaults;
+            }
+        }
+
+        const gameSettings = loadGameSettings();
+
+        function saveGameSettings() {
+            try {
+                localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(gameSettings));
+            } catch (error) {
+                console.warn('Game-instellingen konden niet worden opgeslagen.', error);
+            }
+        }
         const sessionToken=()=>Array.from(crypto.getRandomValues(new Uint8Array(32)),b=>b.toString(16).padStart(2,'0')).join('');
         function connectionStatus(message,error=false){
             const el=document.getElementById('connection-status');el.textContent=message;el.style.color=error?'#fda4af':'#67e8f9';
@@ -1556,7 +1794,7 @@ class SquadEngine{
             enemyHp: 180,
             maxEnemyHp: 180,
             pendingAction: null,
-            audioEnabled: true
+            audioEnabled: gameSettings.audioEnabled
         };
 
         let currentQuizData = null;
@@ -1851,7 +2089,7 @@ class SquadEngine{
         function combatSound(kind){
             if(!combatAudio||combatAudio.state!=='running'||!gameState.audioEnabled)return;
             try{const oscillator=combatAudio.createOscillator(),gain=combatAudio.createGain(),now=combatAudio.currentTime;
-                oscillator.type=kind==='heal'||kind==='level'?'sine':'triangle';oscillator.frequency.setValueAtTime(kind==='heal'?520:kind==='level'?660:kind==='miss'?170:280,now);oscillator.frequency.exponentialRampToValueAtTime(kind==='heal'||kind==='level'?880:100,now+.16);gain.gain.setValueAtTime(.035,now);gain.gain.exponentialRampToValueAtTime(.001,now+.2);oscillator.connect(gain);gain.connect(combatAudio.destination);oscillator.start(now);oscillator.stop(now+.21);
+                oscillator.type=kind==='heal'||kind==='level'?'sine':'triangle';oscillator.frequency.setValueAtTime(kind==='heal'?520:kind==='level'?660:kind==='miss'?170:280,now);oscillator.frequency.exponentialRampToValueAtTime(kind==='heal'||kind==='level'?880:100,now+.16);const volumeScale=gameSettings.volume/100;gain.gain.setValueAtTime(.035*volumeScale,now);gain.gain.exponentialRampToValueAtTime(.001*volumeScale,now+.2);oscillator.connect(gain);gain.connect(combatAudio.destination);oscillator.start(now);oscillator.stop(now+.21);
             }catch{}
         }
         function showCombatTrail(actor,card,kind){
@@ -2211,13 +2449,97 @@ class SquadEngine{
             }
         };
 
-        window.toggleAudio = function() {
-            gameState.audioEnabled = !gameState.audioEnabled;
-            const btn = document.getElementById('audio-icon');
-            if (btn) {
-                btn.setAttribute('data-lucide', gameState.audioEnabled ? 'volume-2' : 'volume-x');
-                refreshIcons();
+        function updateAudioControls() {
+            const icon = document.getElementById('audio-icon');
+            const button = document.getElementById('audio-btn');
+            if (icon) icon.setAttribute('data-lucide', gameState.audioEnabled ? 'volume-2' : 'volume-x');
+            if (button) button.title = gameState.audioEnabled ? 'Geluid uitzetten' : 'Geluid aanzetten';
+            const checkbox = document.getElementById('settings-audio-enabled');
+            if (checkbox) checkbox.checked = gameState.audioEnabled;
+            refreshIcons();
+        }
+
+        function updateSettingsUI() {
+            const volume = document.getElementById('settings-volume');
+            const volumeValue = document.getElementById('settings-volume-value');
+            const audio = document.getElementById('settings-audio-enabled');
+            const motion = document.getElementById('settings-reduced-motion');
+            const darkButton = document.getElementById('theme-dark-btn');
+            const lightButton = document.getElementById('theme-light-btn');
+
+            if (volume) volume.value = String(gameSettings.volume);
+            if (volumeValue) volumeValue.textContent = gameSettings.volume + '%';
+            if (audio) audio.checked = gameSettings.audioEnabled;
+            if (motion) motion.checked = gameSettings.reducedMotion;
+
+            if (darkButton) {
+                darkButton.classList.toggle('is-selected', gameSettings.theme === 'dark');
+                darkButton.setAttribute('aria-pressed', String(gameSettings.theme === 'dark'));
             }
+            if (lightButton) {
+                lightButton.classList.toggle('is-selected', gameSettings.theme === 'light');
+                lightButton.setAttribute('aria-pressed', String(gameSettings.theme === 'light'));
+            }
+        }
+
+        function applyGameSettings() {
+            document.documentElement.dataset.theme = gameSettings.theme;
+            document.body.dataset.theme = gameSettings.theme;
+            document.documentElement.dataset.reducedMotion = String(gameSettings.reducedMotion);
+            gameState.audioEnabled = gameSettings.audioEnabled;
+            updateAudioControls();
+            updateSettingsUI();
+        }
+
+        window.openSettings = function() {
+            updateSettingsUI();
+            const modal = document.getElementById('settings-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                refreshIcons();
+                document.getElementById('settings-volume')?.focus();
+            }
+        };
+
+        window.closeSettings = function() {
+            document.getElementById('settings-modal')?.classList.add('hidden');
+        };
+
+        window.setGameTheme = function(theme) {
+            if (theme !== 'dark' && theme !== 'light') return;
+            gameSettings.theme = theme;
+            document.documentElement.dataset.theme = theme;
+            document.body.dataset.theme = theme;
+            saveGameSettings();
+            updateSettingsUI();
+        };
+
+        window.setGameVolume = function(value) {
+            const numericValue = Number(value);
+            if (!Number.isFinite(numericValue)) return;
+            gameSettings.volume = Math.max(0, Math.min(100, numericValue));
+            const label = document.getElementById('settings-volume-value');
+            if (label) label.textContent = gameSettings.volume + '%';
+            saveGameSettings();
+        };
+
+        window.setAudioEnabled = function(enabled) {
+            gameSettings.audioEnabled = Boolean(enabled);
+            gameState.audioEnabled = gameSettings.audioEnabled;
+            saveGameSettings();
+            updateAudioControls();
+            updateSettingsUI();
+        };
+
+        window.setReducedMotion = function(enabled) {
+            gameSettings.reducedMotion = Boolean(enabled);
+            document.documentElement.dataset.reducedMotion = String(gameSettings.reducedMotion);
+            saveGameSettings();
+            updateSettingsUI();
+        };
+
+        window.toggleAudio = function() {
+            setAudioEnabled(!gameState.audioEnabled);
             showNotification(gameState.audioEnabled ? "Geluid AANGEZET" : "Geluid UITGEZET", "info");
         };
 
@@ -2225,6 +2547,10 @@ class SquadEngine{
         window.addEventListener('DOMContentLoaded', () => {
             initializeMultiplayer(); registerGameTools();
             document.getElementById('input-squad-code').addEventListener('keydown',event => {if (event.key === 'Enter') joinExistingSquad();});
+            applyGameSettings();
+            document.addEventListener('keydown', event => {
+                if (event.key === 'Escape') closeSettings();
+            });
             refreshIcons();
             switchCodexTab('organellen');
         });

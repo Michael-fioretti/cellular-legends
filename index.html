@@ -637,6 +637,25 @@ button,input,select{font:inherit}button{touch-action:manipulation}button:focus-v
     @media(prefers-reduced-motion:reduce) {
         .battle-vfx,.class-art-preview svg,.actor-sprite svg,.campaign-node.node-current>span,.route-art-core { animation:none!important; }
     }
+
+/* Combat polish: atmospheric arena, slash impacts, healing and recoil */
+#battle-arena-card{position:relative;isolation:isolate;overflow:hidden;background-image:radial-gradient(ellipse at 50% 85%,rgba(14,165,233,.14),transparent 55%),linear-gradient(145deg,rgba(2,6,23,.4),rgba(15,23,42,.3))}
+#battle-arena-card:before{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;background:radial-gradient(circle at 15% 20%,rgba(56,189,248,.13),transparent 25%),radial-gradient(circle at 85% 80%,rgba(168,85,247,.12),transparent 28%),linear-gradient(transparent 70%,rgba(2,6,23,.2)};opacity:.8;animation:arena-atmosphere 8s ease-in-out infinite alternate}
+#battle-targets,#field-party,#battle-action-banner,#battle-target-description{position:relative;z-index:1}
+#battle-arena-card.biome-1:before{background:radial-gradient(circle at 20% 30%,rgba(34,211,238,.2),transparent 28%),radial-gradient(circle at 75% 75%,rgba(14,116,144,.18),transparent 35%)}
+#battle-arena-card.biome-2:before{background:radial-gradient(circle at 25% 25%,rgba(167,139,250,.23),transparent 30%),radial-gradient(circle at 75% 80%,rgba(124,58,237,.17),transparent 38%)}
+#battle-arena-card.biome-3:before{background:radial-gradient(circle at 20% 35%,rgba(251,146,60,.22),transparent 30%),radial-gradient(circle at 80% 75%,rgba(249,115,22,.18),transparent 35%)}
+#battle-arena-card.biome-4:before{background:radial-gradient(circle at 25% 30%,rgba(244,114,182,.22),transparent 30%),radial-gradient(circle at 75% 80%,rgba(219,39,119,.18),transparent 35%)}
+.vfx-slash .vfx-core{width:calc(var(--vfx-size)*.75);height:8px;border-radius:100%;background:linear-gradient(90deg,transparent,#fff,var(--vfx-color),transparent);box-shadow:0 0 20px var(--vfx-color);transform:rotate(-35deg);animation:slash-cut .48s cubic-bezier(.15,.8,.2,1) both}
+.vfx-claw .vfx-core,.vfx-arc .vfx-core{width:var(--vfx-size);height:14px;border:3px solid var(--vfx-color);border-color:var(--vfx-color) transparent transparent transparent;border-radius:50%;transform:rotate(-35deg);animation:slash-cut .5s ease-out both}
+.vfx-heal .vfx-core{border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.7),var(--vfx-color) 35%,transparent 70%);box-shadow:0 0 30px #34d399;animation:heal-bloom .8s ease-out both}
+.actor-hit{animation:hit-shake .55s .15s ease,hit-flash .45s ease}
+.actor-healing{animation:heal-pulse .85s ease}
+@keyframes slash-cut{0%{opacity:0;scale:.2}35%{opacity:1;scale:1.2}100%{opacity:0;scale:.75}}
+@keyframes heal-bloom{0%{opacity:0;scale:.2}45%{opacity:1;scale:1.35}100%{opacity:0;scale:1.6}}
+@keyframes hit-flash{0%,100%{filter:none}35%{filter:brightness(2.3) saturate(1.5)}}
+@keyframes arena-atmosphere{0%{transform:scale(1);opacity:.45}100%{transform:scale(1.04);opacity:.95}}
+@media(prefers-reduced-motion:reduce){#battle-arena-card:before,.vfx-slash .vfx-core,.vfx-heal .vfx-core{animation:none!important}}
 </style>
 
 </head>
@@ -2533,7 +2552,7 @@ class SquadEngine{
                 affected.push({card,effect,floating,trail:showCombatTrail(actor,card,event.kind)});
             }
             const vfx=createBattleVFX(event,actor,affected);
-            const duration=event.moveId?1200:event.kind==='level'?950:900;
+            const duration=event.moveId?1250:event.kind==='level'?950:event.kind==='heal'?1050:850;
             eventTimer=setTimeout(()=>{
                 actor?.classList.remove(actingClass);
                 if(moveClass)actor?.classList.remove(moveClass);

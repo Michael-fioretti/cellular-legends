@@ -656,6 +656,35 @@ button,input,select{font:inherit}button{touch-action:manipulation}button:focus-v
 @keyframes hit-flash{0%,100%{filter:none}35%{filter:brightness(2.3) saturate(1.5)}}
 @keyframes arena-atmosphere{0%{transform:scale(1);opacity:.45}100%{transform:scale(1.04);opacity:.95}}
 @media(prefers-reduced-motion:reduce){#battle-arena-card:before,.vfx-slash .vfx-core,.vfx-heal .vfx-core{animation:none!important}}
+
+/* Cinematic ambience pass: menu and battle field */
+body{background:#030712!important;position:relative;}
+body:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 12% 15%,rgba(8,145,178,.23),transparent 38%),radial-gradient(ellipse at 88% 8%,rgba(124,58,237,.2),transparent 42%),radial-gradient(ellipse at 55% 100%,rgba(14,116,144,.13),transparent 40%),linear-gradient(135deg,#020617,#080d20 50%,#030712);background-size:140% 140%;animation:cl-world-glow 22s ease-in-out infinite alternate}
+body:after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.18;background-image:radial-gradient(circle,rgba(186,230,253,.75) 0 1px,transparent 1.6px),radial-gradient(circle,rgba(196,181,253,.65) 0 1px,transparent 1.6px);background-size:97px 97px,151px 151px;background-position:0 0,40px 65px;animation:cl-star-drift 55s linear infinite}
+#screen-menu.main-menu,.main-menu{position:relative;isolation:isolate}
+.main-menu .menu-title{position:relative;padding:1.8rem 1rem 1.4rem;width:100%;border-radius:1.6rem;background:radial-gradient(ellipse at 50% 0,rgba(34,211,238,.13),transparent 65%);}
+.main-menu .menu-title h2{text-shadow:0 0 22px rgba(34,211,238,.28),0 0 55px rgba(139,92,246,.2);letter-spacing:-.035em}
+.main-menu .menu-title .eyebrow{text-transform:uppercase;letter-spacing:.22em;text-shadow:0 0 14px rgba(34,211,238,.4)}
+.main-menu .menu-play button{position:relative;overflow:hidden;isolation:isolate;backdrop-filter:blur(8px);box-shadow:0 18px 55px rgba(2,6,23,.38),inset 0 1px rgba(255,255,255,.08);}
+.main-menu .menu-play button:before{content:"";position:absolute;inset:-50%;z-index:-1;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.16),transparent 60%);transform:translateX(-70%);transition:transform .65s ease}
+.main-menu .menu-play button:hover:before{transform:translateX(70%)}
+.main-menu .menu-primary{background:linear-gradient(130deg,#0891b2,#4f46e5 75%,#7c3aed);border-color:#67e8f9;box-shadow:0 12px 40px rgba(8,145,178,.25),inset 0 1px rgba(255,255,255,.25)}
+.main-menu .menu-secondary{background:linear-gradient(130deg,rgba(15,23,42,.95),rgba(30,41,59,.8));border-color:rgba(148,163,184,.3)}
+#battle-arena-card{min-height:240px;padding:1.25rem;background:radial-gradient(ellipse at 50% 18%,rgba(56,189,248,.17),transparent 42%),radial-gradient(ellipse at 12% 88%,rgba(124,58,237,.19),transparent 45%),radial-gradient(ellipse at 92% 80%,rgba(244,63,94,.16),transparent 44%),linear-gradient(155deg,#061327,#11182c 45%,#080c1b)!important;border:1px solid rgba(103,232,249,.22)!important;box-shadow:inset 0 0 65px rgba(2,6,23,.5),0 18px 55px rgba(0,0,0,.25)}
+#battle-arena-card:before{z-index:0!important;opacity:.7!important;mix-blend-mode:screen;background-image:radial-gradient(circle at 10% 20%,rgba(125,211,252,.7) 0 1px,transparent 2px),radial-gradient(circle at 72% 14%,rgba(196,181,253,.65) 0 1px,transparent 2px),radial-gradient(circle at 90% 70%,rgba(251,191,36,.4) 0 1px,transparent 2px),linear-gradient(115deg,transparent,rgba(103,232,249,.04),transparent)!important;background-size:89px 89px,117px 117px,143px 143px,100% 100%!important;animation:cl-field-particles 28s linear infinite!important}
+#battle-arena-card:after{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;background:linear-gradient(180deg,transparent 45%,rgba(2,6,23,.35)),radial-gradient(ellipse at center,transparent 35%,rgba(2,6,23,.22));}
+#battle-arena-card .field-sides,#battle-arena-card .field-region{position:relative;z-index:1}
+#battle-arena-card .field-actor{backdrop-filter:blur(5px);background:linear-gradient(155deg,rgba(15,23,42,.86),rgba(5,12,24,.8));border-color:rgba(148,163,184,.22);box-shadow:0 12px 30px rgba(0,0,0,.2)}
+#battle-arena-card .enemy-actor{border-color:rgba(251,113,133,.25);box-shadow:0 0 24px rgba(244,63,94,.06)}
+#battle-arena-card.biome-1{background-image:radial-gradient(ellipse at 50% 10%,rgba(6,182,212,.28),transparent 44%),radial-gradient(ellipse at 20% 90%,rgba(16,185,129,.16),transparent 40%),linear-gradient(150deg,#06212a,#10233b 55%,#06131e)!important}
+#battle-arena-card.biome-2{background-image:radial-gradient(ellipse at 50% 10%,rgba(167,139,250,.3),transparent 44%),radial-gradient(ellipse at 15% 90%,rgba(79,70,229,.22),transparent 40%),linear-gradient(150deg,#160d2b,#1c1c3b 55%,#090d20)!important}
+#battle-arena-card.biome-3{background-image:radial-gradient(ellipse at 50% 10%,rgba(251,146,60,.3),transparent 44%),radial-gradient(ellipse at 15% 90%,rgba(234,88,12,.2),transparent 40%),linear-gradient(150deg,#27131b,#30212c 55%,#100d1a)!important}
+#battle-arena-card.biome-4{background-image:radial-gradient(ellipse at 50% 10%,rgba(244,114,182,.3),transparent 44%),radial-gradient(ellipse at 15% 90%,rgba(192,38,211,.2),transparent 40%),linear-gradient(150deg,#200f2a,#2a1933 55%,#100c1b)!important}
+@keyframes cl-world-glow{0%{background-position:0% 50%}100%{background-position:100% 50%}}
+@keyframes cl-star-drift{to{background-position:300px 240px,-200px 260px}}
+@keyframes cl-field-particles{to{background-position:200px -120px,-150px 160px,120px 220px,0 0}}
+@media(max-width:640px){.main-menu .menu-title{padding:1rem .5rem}.main-menu .menu-play button{padding:1.1rem}#battle-arena-card{padding:.75rem}}
+@media(prefers-reduced-motion:reduce){body:before,body:after,#battle-arena-card:before,.main-menu .menu-play button:before{animation:none!important;transition:none!important}}
 </style>
 
 </head>

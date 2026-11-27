@@ -2547,7 +2547,6 @@ class SquadEngine{
             const line=document.createElement('span');line.className='combat-trail';line.style.left=x+'px';line.style.top=y+'px';line.style.width=Math.hypot(dx,dy)+'px';line.style.transform='rotate('+Math.atan2(dy,dx)+'rad)';line.style.setProperty('--trail-color',kind==='heal'?'#34d399':'#38bdf8');arena.appendChild(line);return line;
         }
 
-        function actorLabel(id){
         function actorLabel(id){const s=activeCampaign(),me=isSquadMode?myUserId:'solo';return id===me?'Jij ('+(s.members[id]?.name||'Jij')+')':s.members[id]?.name||s.battle?.enemies.find(e=>e.id===id)?.name||'Cel-strijder';}
         function ensureSpriteTemplates(){
             if(spriteTemplate)return;
@@ -2734,7 +2733,6 @@ class SquadEngine{
             },duration);
         }
 
-        function renderCampaignBattle(s){
         function renderCampaignBattle(s){
             const b=s.battle;if(!b)return;
             if(gameState.pendingAction&&quizTurn&&(quizTurn.battleId!==b.id||quizTurn.turnNumber!==b.turnNumber||s.status!=='battle'))resetBattleInteraction();

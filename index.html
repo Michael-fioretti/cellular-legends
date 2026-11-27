@@ -748,7 +748,7 @@ body:after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opac
 .player-actor.actor-hit{animation:cl-player-recoil .58s .12s ease-out both!important}
 @keyframes cl-enemy-recoil{0%,100%{transform:translateX(0);filter:none}25%{transform:translateX(10px) rotate(2deg);filter:brightness(1.9) saturate(1.5)}52%{transform:translateX(-5px) rotate(-1deg)}75%{transform:translateX(3px)}}
 @keyframes cl-player-recoil{0%,100%{transform:translateX(0);filter:none}25%{transform:translateX(-9px) rotate(-2deg);filter:brightness(1.8)}55%{transform:translateX(4px) rotate(1deg)}}
-.actor-healing .actor-sprite{filter:drop-shadow(0 0 12px #34d399) drop-shadow(0 0 25px rgba(52,211,153,.7));animation:cl-heal-rise .9s ease-in-out}
+.actor-healing .actor-sprite{position:relative;filter:drop-shadow(0 0 12px #34d399) drop-shadow(0 0 25px rgba(52,211,153,.7));animation:cl-heal-rise .9s ease-in-out}
 .actor-healing .actor-sprite::after{content:"";position:absolute;inset:-9px;border:2px solid rgba(110,231,183,.8);border-radius:50%;box-shadow:0 0 20px rgba(52,211,153,.55);animation:cl-heal-orbit .9s ease-out both}
 @keyframes cl-heal-rise{50%{transform:translateY(-7px) scale(1.12)}}
 @keyframes cl-heal-orbit{0%{transform:scale(.35) rotate(-35deg);opacity:0}45%{opacity:1}100%{transform:scale(1.7) rotate(45deg);opacity:0}}
@@ -774,14 +774,14 @@ body:after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opac
 .vfx-heal .vfx-ring{border-color:rgba(110,231,183,.9);border-width:3px;box-shadow:0 0 18px rgba(52,211,153,.55)}
 .vfx-heal .vfx-ring-two{border-style:solid;border-color:rgba(167,243,208,.65)}
 .vfx-heal .vfx-particle{width:5px;height:13px;border-radius:100%;background:linear-gradient(#ecfdf5,#34d399);animation:cl-heal-particle 1.05s var(--particle-delay) ease-out both}
-@keyframes cl-heal-particle{0%{opacity:0;transform:translate(-50%,8px) scale(.4)}25%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + (var(--particle-angle) * .1)), -65px) scale(.1)}}
+@keyframes cl-heal-particle{0%{opacity:0;transform:translate(-50%,8px) scale(.4)}25%{opacity:1}100%{opacity:0;transform:translate(-50%,-65px) scale(.1)}}
 .vfx-storm .vfx-blade{height:9%;width:105%;background:linear-gradient(90deg,transparent,#fff,var(--vfx-color),#fff,transparent);clip-path:polygon(0 50%,24% 0,38% 60%,62% 10%,75% 70%,100% 50%,75% 100%,61% 40%,38% 90%,24% 30%)}
 .vfx-storm .vfx-blade-one{animation:cl-blade-cut .65s .05s ease-out both;transform:translate(-50%,-50%) rotate(-25deg)}
 .vfx-storm .vfx-blade-two{animation:cl-blade-cut .65s .22s ease-out both;transform:translate(-50%,-50%) rotate(25deg)}
 .vfx-storm .vfx-blade-three{animation:cl-blade-cut .65s .39s ease-out both;transform:translate(-50%,-50%) rotate(90deg)}
 .vfx-burst .vfx-core,.vfx-nova .vfx-core{width:42%;height:42%;background:radial-gradient(circle,#fff 0 8%,var(--vfx-color) 35%,transparent 72%);box-shadow:0 0 38px var(--vfx-color),0 0 85px var(--vfx-color)}
 .vfx-beam .vfx-core{width:10%;height:125%;border-radius:100%;background:linear-gradient(90deg,transparent,#fff,var(--vfx-color),#fff,transparent)}
-.battle-impact{position:absolute;width:62px;height:62px;transform:translate(-50%,-50%);animation:cl-impact-pop .7s var(--impact-delay,0ms) cubic-bezier(.2,.8,.2,1) both}
+.battle-impact{position:absolute;color:var(--vfx-color,#fff);width:62px;height:62px;transform:translate(-50%,-50%);animation:cl-impact-pop .7s var(--impact-delay,0ms) cubic-bezier(.2,.8,.2,1) both}
 .battle-impact i{position:absolute;inset:10%;border:2px solid var(--vfx-color,#fff);border-radius:50%;box-shadow:0 0 14px currentColor;animation:cl-impact-ring .62s var(--impact-delay,0ms) ease-out both}
 .battle-impact i:nth-child(2){inset:-8%;border-style:dashed;animation-delay:calc(var(--impact-delay,0ms) + 70ms)}
 .battle-impact i:nth-child(3){inset:32%;border-width:4px;background:rgba(255,255,255,.35);animation:cl-impact-core .45s var(--impact-delay,0ms) ease-out both}
@@ -2658,6 +2658,7 @@ class SquadEngine{
             }
             const layer=document.createElement('div');
             layer.className='battle-vfx-layer';
+            layer.style.setProperty('--vfx-color',style.color);
             layer.setAttribute('aria-hidden','true');
             const fx=document.createElement('div');
             fx.className='battle-vfx vfx-'+style.type+' move-vfx-'+spriteSafeId(move);
